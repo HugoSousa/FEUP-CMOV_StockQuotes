@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="StockExchangeQuotes.QuotationDetails"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockExchangeQuotes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
+    xmlns:Controls="using:WinRTXamlToolkit.Controls">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <StackPanel Orientation="Vertical">
+            
+            <Charting:Chart Name="MyChart" Width="250" Height="300" Title="Chart" Margin="0">
+                <Charting:PieSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" IsSelectionEnabled="True" />
+            </Charting:Chart>
+
+            <TextBlock Text="VALUE" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
+            <TextBlock Text="SOMETHING" HorizontalAlignment="Center"  Margin="0 0 0 20"></TextBlock>
+
+            <TextBlock Text="NOTIFICATIONS" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="ABOVE" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
+                <Controls:NumericUpDown ValueFormat="F0" Value="" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                <Button Content="X" Margin="8 0 0 0"></Button> <!-- TODO CHANGE TO IMAGE -->
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
+                <TextBlock Text="BELOW" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
+                <Controls:NumericUpDown ValueFormat="F0" Value="" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                <Button Content="X" Margin="8 0 0 0"></Button> <!-- TODO CHANGE TO IMAGE -->
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
