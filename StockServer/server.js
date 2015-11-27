@@ -92,6 +92,23 @@ router.route('/portfolio')
 		});
 });
 
+router.route('/portfolio/add')
+	.post([auth], function(req, res) {
+		var userid = req.user.iduser;
+		if (req.body.symbol != undefined && req.body.symbol != "") {
+		database.addToPortfolio(userid, req.body.symbol, function(err, result){
+					if (err) {
+			           res.status(400).json({error: err});              
+			        } else {            
+			            res.status(200).json({result: result});   
+			        }
+				});
+		}  else {            
+	            res.status(200).json({error: "Missing share name"});   
+	        }
+		
+});
+
 
 // OPERATIONAL ROUTING
 // =============================================================================	

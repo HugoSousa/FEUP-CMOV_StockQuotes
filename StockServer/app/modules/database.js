@@ -50,7 +50,6 @@ exports.registeruser = function (user, cb) {
 exports.getUserByUsername = function (username, cb) {
   connection.query('select * from user where login = ?',[username], function (err, rows, fields) {
     if (!err){
-        console.log(rows[0]);
         cb(null, rows[0]);
       }
       else{
@@ -67,6 +66,30 @@ exports.getPortfolio = function(userid, cb){
       }
       else{
         console.log('Error while performing Query.');
+        cb(err, null);
+      }
+  });
+}
+
+exports.addToPortfolio = function(userid,sharesymbol,cb) {
+    connection.query('select * from share where symbol = ?', [sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+              var share = rows[0];
+             connection.query('insert into user_share(iduser, idshare) values (?,?)',[ userid, share.idshare], function (err, result) {
+                if (!err){
+                    cb(null,  "Successfully added new share");
+                }
+                else{
+                  console.log('Error on share addition: ', err);
+                  cb(err,null);
+                }
+              });
+        }
+        else cb("Share not found", null);
+      }
+      else{
+        console.log('Error while performing search.');
         cb(err, null);
       }
   });
