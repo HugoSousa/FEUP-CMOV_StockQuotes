@@ -79,6 +79,18 @@ app.get("/api/testlogin", [auth], function (req, res) {
 	res.send(req.user);
 });
 
+router.route('/portfolio')
+	.get([auth], function(req, res) {
+		var userid = req.user.iduser;
+		
+		database.getPortfolio(userid, function(err, data){
+			if (err) {
+	           res.status(400).json({error: err});              
+	        } else {            
+	            res.status(200).json({portfolio: data});   
+	        }
+		});
+});
 
 
 // OPERATIONAL ROUTING
