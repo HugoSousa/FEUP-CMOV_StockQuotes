@@ -42,8 +42,11 @@ CREATE TABLE `user` (
   `iduser` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(45) NOT NULL,
   `password` varchar(256) NOT NULL,
+  `main_share` int(11) DEFAULT NULL,
   PRIMARY KEY (`iduser`),
-  UNIQUE KEY `login_UNIQUE` (`login`)
+  UNIQUE KEY `login_UNIQUE` (`login`),
+  KEY `fk_user_mainshare_idx` (`main_share`),
+  CONSTRAINT `fk_user_mainshare` FOREIGN KEY (`main_share`) REFERENCES `share` (`idshare`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -58,6 +61,8 @@ CREATE TABLE `user_share` (
   `iduser_share` int(11) NOT NULL AUTO_INCREMENT,
   `iduser` int(11) NOT NULL,
   `idshare` int(11) NOT NULL,
+  `limit_down` double DEFAULT NULL,
+  `limit_up` double DEFAULT NULL,
   PRIMARY KEY (`iduser_share`),
   KEY `fk_usershare_user_idx` (`iduser`),
   KEY `fk_usershare_share_idx` (`idshare`),
@@ -75,4 +80,4 @@ CREATE TABLE `user_share` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-11-26 23:12:04
+-- Dump completed on 2015-11-27 16:24:15
