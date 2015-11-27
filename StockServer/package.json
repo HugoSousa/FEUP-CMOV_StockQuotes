@@ -1,0 +1,21 @@
+{
+  "name": "FEUP-CMOV_StockQuotes",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/HugoSousa/FEUP-CMOV_StockQuotes.git"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Francisco Maciel & Hugo Sousa",
+  "dependencies": {
+    "async": "^1.4.2",
+    "body-parser": "~1.0.1",
+    "express": "~4.0.0",
+    "jwt-simple": "^0.3.1",
+    "moment": "^2.10.6",
+    "morgan": "~1.0.0",
+    "mysql": "^2.9.0"
+  }
+}
