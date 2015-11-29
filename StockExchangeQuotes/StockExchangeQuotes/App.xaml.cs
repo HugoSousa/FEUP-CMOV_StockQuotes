@@ -31,6 +31,7 @@ namespace StockExchangeQuotes
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            SharesSingleton ss = SharesSingleton.Instance; //so it starts being already initialized
         }
 
         /// <summary>

@@ -87,7 +87,7 @@ router.route('/portfolio')
 			if (err) {
 	           res.status(400).json({error: err});              
 	        } else {            
-	            res.status(200).json({portfolio: data});   
+	            res.status(200).json(data);   
 	        }
 		});
 });
@@ -100,7 +100,7 @@ router.route('/portfolio/add')
 					if (err) {
 			           res.status(400).json({error: err});              
 			        } else {            
-			            res.status(200).json({result: result});   
+			            res.status(200).json(result);   
 			        }
 				});
 		}  else {            
@@ -115,8 +115,7 @@ router.route('/portfolio/add')
 router.get('/shares', function(req, res) {
 	database.getAllShares(function(err, result) {
 		if (err) res.status(401).json({error: err});
-		else res.status(200).json({result: result});
-
+		else res.status(200).json(result);
 	})
 });
 

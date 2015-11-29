@@ -3,10 +3,7 @@
 var mysql = require('mysql');
 var async = require('async');
 var moment = require('moment');
-
-
-var fs = require('fs');
-
+var http = require('follow-redirects').http;
 
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -60,14 +57,94 @@ exports.getUserByUsername = function (username, cb) {
 }
 
 exports.getPortfolio = function(userid, cb){
+
+  var portfolio_shares = '';
   connection.query('select * from user_share where iduser = ?', [userid], function (err, rows, fields) {
     if (!err){
+      async.series([
+          function(callback){
+            async.forEachOf(rows, function(row, index, callback1){          
+                connection.query('select * from share where idshare = ?', [rows[index]['idshare']], function (err1, rows1, fields1) {
+                  if (!err1){
+                    portfolio_shares += rows1[0]['symbol'] + ',';
+                    rows[index]['symbol'] = rows1[0]['symbol'];
+                    rows[index]['name'] = rows1[0]['name'];
+                  }
+                  else{
+                    console.log('Error while performing Query.', err1);
+                    cb(err1,null);
+                  }
+                  callback1();
+                });
+              },
+              function(err){
+                if(!err){
+                  //cb(null, rows);
+                  callback(null, 'one');
+                }else{
+                  cb(err,null);
+                }
+              }
+            );
+          },
+          function(callback){
+            
+            portfolio_shares = portfolio_shares.substring(0, portfolio_shares.length - 1);
+            var str = '';
+            
+            //http request to yahoo finance API
+            var options = {
+              host: 'finance.yahoo.com',
+              path: '/d/quotes?f=sl1d1t1v&s=' + portfolio_shares,
+              method: 'GET'
+            };
+
+            callback_yahoo = function(response) {
+              //another chunk of data has been recieved, so append it to `str`
+              response.on('data', function (chunk) {
+                str += chunk;
+              });
+
+              //the whole response has been received, so we just print it out here
+              response.on('end', function () {
+                //console.log(str);
+                var lines = str.split('\n');
+                for(var i = 0; i < lines.length - 1; i++){
+
+                  line_fields = lines[i].split(",");
+                  symbol = line_fields[0].replace(/\"/g, "");
+                  value = parseFloat(line_fields[1]);
+                  //console.log(symbol + " / " + value);
+
+                  for(var j = 0; j < rows.length; j++){
+                    //console.log("SYMBOL1 " + rows[j]['symbol']);
+                    //console.log("SYMBOL2 " + symbol);
+
+                    if(rows[j]['symbol'] == symbol){
+                      rows[j]['value'] = value; 
+                    }
+                  }
+                }
+
+                callback(null, 'two');
+              });
+            }
+
+            var r = http.request(options, callback_yahoo)
+            r.on('error', function(error) {
+              console.log(error);
+            });
+
+            r.end();
+          }
+      ],
+      function(err, results){
         cb(null, rows);
-      }
-      else{
-        console.log('Error while performing Query.');
-        cb(err, null);
-      }
+      });
+          
+    }else{
+      cb(err,null);
+    }
   });
 }
 
@@ -90,25 +167,6 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
       }
       else{
         console.log('Error while performing search.');
-        cb(err, null);
-      }
-  });
-}
-
-exports.updateStatistics = function(employee, body, cb){
-
-  var uploaded_routes = parseInt(body.uploaded_routes);
-  var uploaded_tickets = parseInt(body.uploaded_tickets);
-  var validated_tickets = parseInt(body.validated_tickets);
-  var fraudulent_tickets = parseInt(body.fraudulent_tickets);
-  var no_shows = parseInt(body.no_shows);
-
-  connection.query('update employee set uploaded_routes = uploaded_routes + ?, uploaded_tickets = uploaded_tickets + ?, validated_tickets = validated_tickets + ?, fraudulent_tickets = fraudulent_tickets + ?, no_shows = no_shows + ? where idemployee = ?', [uploaded_routes, uploaded_tickets, validated_tickets, fraudulent_tickets, no_shows, employee], function (err, rows, fields) {
-    if (!err){
-        cb(null, {message: 'Update successful'});
-      }
-      else{
-        console.log('Error while performing Query.');
         cb(err, null);
       }
   });

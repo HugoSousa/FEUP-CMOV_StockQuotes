@@ -13,6 +13,7 @@
     "async": "^1.4.2",
     "body-parser": "~1.0.1",
     "express": "~4.0.0",
+    "follow-redirects": "0.0.7",
     "jwt-simple": "^0.3.1",
     "moment": "^2.10.6",
     "morgan": "~1.0.0",

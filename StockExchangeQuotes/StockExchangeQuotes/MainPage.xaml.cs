@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Navigation;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.Data.Json;
+using Windows.Web.Http;
 using StockExchangeQuotes.Annotations;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -26,6 +28,8 @@ namespace StockExchangeQuotes
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    
+
     public sealed partial class MainPage : Page
     {
         //private List<Quotation> allItems = new List<Quotation>();
@@ -83,8 +87,12 @@ namespace StockExchangeQuotes
 
     public class MainPageViewModel : INotifyPropertyChanged
     {
+        private string API_ADDRESS = "http://localhost:8080/api/";
+
+        SharesSingleton ss = SharesSingleton.Instance;
+
         private ObservableCollection<Quotation> _items;
-        private ObservableCollection<Quotation> _allItems;
+        //private ObservableCollection<Quotation> _allItems;
 
         public ObservableCollection<Quotation> Items
         {
@@ -96,7 +104,7 @@ namespace StockExchangeQuotes
                 OnPropertyChanged();
             }
         }
-
+        /*
         public ObservableCollection<Quotation> AllItems
         {
             get { return _allItems; }
@@ -107,22 +115,55 @@ namespace StockExchangeQuotes
                 OnPropertyChanged();
             }
         }
-
+        */
         public MainPageViewModel()
         {
+            //LoadAllItems();
             Items = new ObservableCollection<Quotation>();
-            Items.Add(new Quotation() { Name = "GOOG", Value = 1.323 });
-            Items.Add(new Quotation() { Name = "APPL", Value = 1.101 });
-            Items.Add(new Quotation() { Name = "IBM", Value = 0.922 });
+            Items.Add(new Quotation() { Symbol = "GOOG", Value = 1.323 });
+            Items.Add(new Quotation() { Symbol = "APPL", Value = 1.101 });
+            Items.Add(new Quotation() { Symbol = "IBM", Value = 0.922 });
 
+            /*
             AllItems = new ObservableCollection<Quotation>();
             AllItems.Add(new Quotation() { Name = "IAM", Value = 1.323 });
             AllItems.Add(new Quotation() { Name = "GOOG", Value = 1.323 });
             AllItems.Add(new Quotation() { Name = "APPL", Value = 1.101 });
             AllItems.Add(new Quotation() { Name = "IBM", Value = 0.922 });
             AllItems.Add(new Quotation() { Name = "GAGL", Value = 1.323 });
+            */
             
         }
+        /*
+        private async void LoadAllItems()
+        {
+            Uri uri = new Uri(API_ADDRESS + "shares");
+
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync(uri);
+
+            if (response.StatusCode != HttpStatusCode.Ok)
+            {
+                
+            }
+            else
+            {
+                string answer = await response.Content.ReadAsStringAsync();
+                JsonObject json = JsonObject.Parse(answer);
+                JsonArray resultArray = json.GetNamedArray("result");
+
+                foreach (var share in resultArray)
+                {
+                    JsonObject shareJson = JsonObject.Parse(share.Stringify());
+                    string symbol = shareJson.GetNamedString("symbol");
+                    string name = shareJson.GetNamedString("name");
+                    Quotation q = new Quotation() {Name = name, Symbol = symbol};
+                    AllItems.Add(q);
+                }
+
+            }
+        }
+        */
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -150,7 +191,7 @@ namespace StockExchangeQuotes
             if (text.Length == 0)
                 return null;
 
-            result = AllItems.Where(x => x.Name.Contains(text)).ToArray();
+            result = ss.AllItems.Where(x => x.Symbol.Contains(text)).ToArray();
 
             return result;
         }
@@ -161,20 +202,55 @@ namespace StockExchangeQuotes
             {
                 // User selected an item from the suggestion list, take an action on it here.
                 //TODO add only if it doesn't exist in the items yet. add in the db also
-                _items.Add(AllItems.First(x => x.Name.Equals(sender.Text)));
+                //refresh the portfolio
+                _items.Add(ss.AllItems.First(x => x.Symbol.Equals(sender.Text)));
+                RefreshPortfolio();
 
             }
             else
             {
                 // Use args.QueryText to determine what to do.
                 //TODO verify if the share in args.QueryText exists. If so, get from DB and add to Portfolio
-                Items.Add(AllItems[0]);
+                Items.Add(ss.AllItems[0]);
+            }
+        }
+
+        private async void RefreshPortfolio()
+        {
+            _items.Clear();
+            Uri uri = new Uri(API_ADDRESS + "portfolio");
+
+            HttpClient client = new HttpClient();
+            //TODO GET ACCESS TOKEN FROM SETTINGS (Windows.Storage.ApplicationData.Current.LocalSettings)
+            client.DefaultRequestHeaders.Add("x-access-token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo");
+            HttpResponseMessage response = await client.GetAsync(uri);
+
+            if (response.StatusCode != HttpStatusCode.Ok)
+            {
+            }
+            else
+            {
+                
+                string answer = await response.Content.ReadAsStringAsync();
+                JsonArray json = JsonArray.Parse(answer);
+
+                foreach (var share in json)
+                {
+                    JsonObject shareObj = share.GetObject();
+                    string symbol = shareObj.GetNamedString("symbol");
+                    string name = shareObj.GetNamedString("name");
+                    double value = 1.0; //TODO ADD TO SERVER
+                    Quotation q = new Quotation() { Name = name, Symbol = symbol, Value = value};
+                    Items.Add(q);
+                }
+                
+
             }
         }
 
         internal void AddToPortfolio_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            sender.Text = ((Quotation)args.SelectedItem).Name;
+            sender.Text = ((Quotation)args.SelectedItem).Symbol;
         }
     }
 }

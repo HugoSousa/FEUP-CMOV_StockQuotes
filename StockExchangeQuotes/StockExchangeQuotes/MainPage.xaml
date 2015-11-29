@@ -28,7 +28,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <TextBlock Text="{Binding Name}"/>
+                            <TextBlock Text="{Binding Symbol}"/>
                             <TextBlock Text="{Binding Value}"  TextAlignment="Right"/>
                         </Grid>
                     </DataTemplate>
