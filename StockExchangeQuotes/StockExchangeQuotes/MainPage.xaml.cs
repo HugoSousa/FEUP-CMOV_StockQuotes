@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Web.Http;
@@ -83,6 +85,21 @@ namespace StockExchangeQuotes
             pageModel.AddToPortfolio_SuggestionChosen(sender, args);
         }
 
+        private void ToggleAddShare(object sender, RoutedEventArgs e)
+        {
+            AddShareBox.Visibility = AddShareBox.Visibility == Visibility.Visible ? (Visibility.Collapsed) : Visibility.Visible;
+            ButtonToggle.Icon = AddShareBox.Visibility == Visibility.Visible ? new SymbolIcon(Symbol.Remove) : new SymbolIcon(Symbol.Add);
+        }
+
+        private void LogoutClick(object sender, RoutedEventArgs e)
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            localSettings.Values["token"] = null;
+            localSettings.Values["main_share"] = null;
+            localSettings.Values["username"] = null;
+            Frame.Navigate(typeof (Login));
+        }
     }
 
     public class MainPageViewModel : INotifyPropertyChanged, OnApiRequestCompleted
@@ -118,12 +135,14 @@ namespace StockExchangeQuotes
         */
         public MainPageViewModel()
         {
-            //LoadAllItems();
             Items = new ObservableCollection<Quotation>();
+            RefreshPortfolio();
+            //LoadAllItems();
+            /*
             Items.Add(new Quotation() { Symbol = "GOOG", Value = 1.323 });
             Items.Add(new Quotation() { Symbol = "APPL", Value = 1.101 });
             Items.Add(new Quotation() { Symbol = "IBM", Value = 0.922 });
-
+            */
             /*
             AllItems = new ObservableCollection<Quotation>();
             AllItems.Add(new Quotation() { Name = "IAM", Value = 1.323 });
@@ -200,24 +219,44 @@ namespace StockExchangeQuotes
         {
             if (args.ChosenSuggestion != null)
             {
+                AddPortfolioShare(sender.Text);
                 // User selected an item from the suggestion list, take an action on it here.
                 //TODO add only if it doesn't exist in the items yet. add in the db also
-                //refresh the portfolio
-                _items.Add(ss.AllItems.First(x => x.Symbol.Equals(sender.Text)));
-                RefreshPortfolio();
-
             }
             else
             {
                 // Use args.QueryText to determine what to do.
                 //TODO verify if the share in args.QueryText exists. If so, get from DB and add to Portfolio
-                Items.Add(ss.AllItems[0]);
+                AddPortfolioShare(args.QueryText);
             }
+        }
+
+        private void AddPortfolioShare(string text)
+        {
+            APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.PortfolioAdd, "portfolio/add");
+
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"symbol", text}
+            };
+            var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+            {
+                UseSimpleDictionaryFormat = true
+            });
+            MemoryStream stream = new MemoryStream();
+            serializer.WriteObject(stream, dict);
+            byte[] bytes = stream.ToArray();
+            string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+            //TODO GET ACCESS TOKEN FROM SETTINGS (Windows.Storage.ApplicationData.Current.LocalSettings)
+            request.Execute(
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo",
+                content);
         }
 
         private void RefreshPortfolio()
         {
-            _items.Clear();
+            Items.Clear();
             APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.Portfolio, "portfolio");
             //TODO GET ACCESS TOKEN FROM SETTINGS (Windows.Storage.ApplicationData.Current.LocalSettings)
             request.Execute("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo", null);
@@ -247,6 +286,9 @@ namespace StockExchangeQuotes
                         Items.Add(q);
                     }
                 }
+            }else if (requestCode == APIRequest.requestCodeType.PortfolioAdd)
+            {
+                RefreshPortfolio();
             }
         }
     }

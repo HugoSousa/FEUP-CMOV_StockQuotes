@@ -20,6 +20,7 @@ namespace StockExchangeQuotes
             Login,
             Register,
             Portfolio,
+            PortfolioAdd,
             AllShares
         }
 

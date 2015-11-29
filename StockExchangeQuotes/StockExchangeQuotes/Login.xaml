@@ -8,13 +8,23 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="Username" TextAlignment="Center" Margin="0 50 0 0"></TextBlock>
-            <TextBox TextAlignment="Center" Margin="30 10 30 0"></TextBox>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Row="0">
+            <TextBlock Text="Username" TextAlignment="Center" Margin="0 50 0 0" ></TextBlock>
+            <TextBox TextAlignment="Center" Margin="30 10 30 0" Name="UsernameField"></TextBox>
             <TextBlock Text="Password" TextAlignment="Center" Margin="0 20 0 0"></TextBlock>
-            <TextBox TextAlignment="Center" Margin="30 10 30 0"></TextBox>
-            <Button Content="Login" HorizontalAlignment="Center" Margin="0 20 0 0"></Button>
-            <Button Content="Register" HorizontalAlignment="Center" Margin="0 100 0 0"></Button>
+            <TextBox TextAlignment="Center" Margin="30 10 30 0" Name="PasswordField"></TextBox>
+            <Button Content="Login" HorizontalAlignment="Center" Margin="0 20 0 0" Click="LoginClick"></Button>
+            
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="0 0 0 50">
+            <TextBlock Text="Not registered yet?" TextAlignment="Center" Margin="0 0 0 10"></TextBlock>
+            <Button Content="Register" HorizontalAlignment="Center" ></Button>
         </StackPanel>
     </Grid>
 </Page>

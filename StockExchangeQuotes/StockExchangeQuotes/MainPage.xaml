@@ -12,42 +12,49 @@
     <d:Page.DataContext>
         <local:MainPageViewModel />
     </d:Page.DataContext>
-    
-    <controls:DockPanel>
-        <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" controls:DockPanel.Dock="Top">
-        
-            <TextBlock Text="Portfolio" Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 30"/>
 
-            <ListView x:Name="PortfolioListView" IsItemClickEnabled="True" SelectionChanged="SelectShare" ItemsSource="{Binding Items}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="0">
 
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <TextBlock Text="{Binding Symbol}"/>
-                            <TextBlock Text="{Binding Value}"  TextAlignment="Right"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackPanel>
+            <TextBlock Text="Portfolio" Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 10"/>
 
-
-        <controls:DockPanel VerticalAlignment="Bottom" controls:DockPanel.Dock="Bottom" LastChildFill="true">
-            <!--<TextBlock Text="ADD TO PORTFOLIO" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" controls:DockPanel.Dock="Top"></TextBlock>-->
-            <!--<Button Content="+" controls:DockPanel.Dock="Right"></Button>-->
             <AutoSuggestBox PlaceholderText="Add to Portfolio" QueryIcon="Add"
                             TextChanged="AddToPortfolio_TextChanged"
                             QuerySubmitted="AddToPortfolio_QuerySubmitted"
-                            SuggestionChosen="AddToPortfolio_SuggestionChosen"/>
-            <!--<controls:AutoCompleteTextBox controls:DockPanel.Dock="Left" ></controls:AutoCompleteTextBox>-->
-        </controls:DockPanel>
-        
-    </controls:DockPanel>
+                            SuggestionChosen="AddToPortfolio_SuggestionChosen"
+                            Name="AddShareBox"
+                            Visibility="Collapsed"/>
+        </StackPanel>
+
+        <ListView x:Name="PortfolioListView" IsItemClickEnabled="True" SelectionChanged="SelectShare" ItemsSource="{Binding Items}" Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock Text="{Binding Symbol}"/>
+                        <TextBlock Text="{Binding Value}"  TextAlignment="Right"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <CommandBar IsSticky="True" Grid.Row="2">
+            <AppBarButton Icon="OtherUser" Label="Logout" Click="LogoutClick" Margin="0 0 10 0"/>
+            <AppBarSeparator Margin="0 0 10 0"></AppBarSeparator>
+            <AppBarToggleButton Name="ButtonToggle" Icon="Add" Label="Add Share" Click="ToggleAddShare"/>
+        </CommandBar>
+
+    </Grid>
 </Page>
     
     

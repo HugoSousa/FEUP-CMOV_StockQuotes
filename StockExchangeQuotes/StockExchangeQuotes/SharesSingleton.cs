@@ -5,7 +5,7 @@ using Windows.Web.Http;
 
 namespace StockExchangeQuotes
 {
-    public class SharesSingleton
+    public class SharesSingleton: OnApiRequestCompleted
     {
         private string API_ADDRESS = "http://localhost:8080/api/";
         private List<Quotation> allItems = new List<Quotation>();
@@ -28,31 +28,31 @@ namespace StockExchangeQuotes
             LoadAllItems();
         }
 
-        private async void LoadAllItems()
+        private void LoadAllItems()
         {
-            Uri uri = new Uri(API_ADDRESS + "shares");
+            APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.AllShares, "shares");
+            request.Execute(
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo",
+                null);
+        }
 
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync(uri);
-
-            if (response.StatusCode != HttpStatusCode.Ok)
+        public void onTaskCompleted(string result, APIRequest.requestCodeType requestCode)
+        {
+            if (requestCode == APIRequest.requestCodeType.AllShares)
             {
-
-            }
-            else
-            {
-                string answer = await response.Content.ReadAsStringAsync();
-                JsonArray json = JsonArray.Parse(answer);
-
-                foreach (var share in json)
+                if (result != null)
                 {
-                    JsonObject shareObj = share.GetObject();
-                    string symbol = shareObj.GetNamedString("symbol");
-                    string name = shareObj.GetNamedString("name");
-                    Quotation q = new Quotation() { Name = name, Symbol = symbol };
-                    allItems.Add(q);
-                }
+                    JsonArray json = JsonArray.Parse(result);
 
+                    foreach (var share in json)
+                    {
+                        JsonObject shareObj = share.GetObject();
+                        string symbol = shareObj.GetNamedString("symbol");
+                        string name = shareObj.GetNamedString("name");
+                        Quotation q = new Quotation() { Name = name, Symbol = symbol };
+                        allItems.Add(q);
+                    }
+                }
             }
         }
     }
