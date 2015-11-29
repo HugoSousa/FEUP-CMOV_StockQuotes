@@ -64,6 +64,7 @@ CREATE TABLE `user_share` (
   `limit_down` double DEFAULT NULL,
   `limit_up` double DEFAULT NULL,
   PRIMARY KEY (`iduser_share`),
+  UNIQUE KEY `uq_usershare` (`iduser`,`idshare`),
   KEY `fk_usershare_user_idx` (`iduser`),
   KEY `fk_usershare_share_idx` (`idshare`),
   CONSTRAINT `fk_usershare_share` FOREIGN KEY (`idshare`) REFERENCES `share` (`idshare`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -80,4 +81,4 @@ CREATE TABLE `user_share` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-11-27 16:24:15
+-- Dump completed on 2015-11-29 15:37:44
