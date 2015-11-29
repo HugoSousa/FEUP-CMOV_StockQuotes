@@ -110,8 +110,6 @@ router.route('/portfolio/add')
 });
 
 
-// OPERATIONAL ROUTING
-// =============================================================================	
 router.get('/shares', function(req, res) {
 	database.getAllShares(function(err, result) {
 		if (err) res.status(401).json({error: err});
@@ -119,7 +117,19 @@ router.get('/shares', function(req, res) {
 	})
 });
 
-// REGISTER OUR ROUTES -------------------------------
+router.route('/share/:symbol')
+	.get([auth], function(req, res) {
+
+	console.log("AQUI");
+	var userid = req.user.iduser;
+	var symbol = req.params.symbol;
+
+	database.getShare(userid, symbol, function(err, result) {
+		if (err) res.status(401).json({error: err});
+		else res.status(200).json(result);
+	})
+});
+
 app.use('/api', router);
 
 // START THE SERVER

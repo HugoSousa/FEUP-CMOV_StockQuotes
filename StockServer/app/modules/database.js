@@ -91,7 +91,7 @@ exports.getPortfolio = function(userid, cb){
             
             portfolio_shares = portfolio_shares.substring(0, portfolio_shares.length - 1);
             var str = '';
-            
+
             //http request to yahoo finance API
             var options = {
               host: 'finance.yahoo.com',
@@ -169,5 +169,51 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
         console.log('Error while performing search.');
         cb(err, null);
       }
+  });
+}
+
+exports.getShare = function(userid, sharesymbol, cb) {
+    connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
+    if (!err){
+      //cb(null,rows[0]);
+      //get the value of the share
+      var str = '';
+
+            //http request to yahoo finance API
+            var options = {
+              host: 'finance.yahoo.com',
+              path: '/d/quotes?f=sl1d1t1v&s=' + sharesymbol,
+              method: 'GET'
+            };
+
+            callback_yahoo = function(response) {
+              //another chunk of data has been recieved, so append it to `str`
+              response.on('data', function (chunk) {
+                str += chunk;
+              });
+
+              //the whole response has been received, so we just print it out here
+              response.on('end', function () {
+                //console.log(str);
+                var line = str.split('\n')[0];
+                line_fields = line.split(",");
+                symbol = line_fields[0].replace(/\"/g, "");
+                value = parseFloat(line_fields[1]);
+                rows[0]['value'] = value; 
+                cb(null, rows);
+              });
+            }
+
+            var r = http.request(options, callback_yahoo)
+            r.on('error', function(error) {
+              console.log(error);
+            });
+
+            r.end();
+    }
+    else{
+      console.log('Error while performing search.');
+      cb(err, null);
+    }
   });
 }

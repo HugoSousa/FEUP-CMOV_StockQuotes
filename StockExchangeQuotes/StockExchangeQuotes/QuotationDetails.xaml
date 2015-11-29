@@ -34,22 +34,18 @@
                 </Grid>
 
                 <TextBlock Text="Name of the company" Margin="15 0 0 0"></TextBlock>
-                
+
                 <StackPanel Orientation="Horizontal" >
-                    
+
                     <TextBlock Text="VALUE" Margin="15 0 0 0 "></TextBlock>
                     <TextBlock Text="SOMETHING"></TextBlock>
                 </StackPanel>
 
-                
-                
-                <Charting:Chart Name="MyChart" Width="350" Height="300" Title="Chart" Margin="0">
+                <Charting:Chart Width="350" Height="300" Title="Chart" Margin="0">
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}"/>
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding Values2Evolution}"/>
                 </Charting:Chart>
 
-                
-                
                 <TextBlock Text="NOTIFICATIONS" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
