@@ -16,7 +16,7 @@
     <controls:DockPanel>
         <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" controls:DockPanel.Dock="Top">
         
-            <TextBlock Text="PORTFOLIO" Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 30"/>
+            <TextBlock Text="Portfolio" Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 30"/>
 
             <ListView x:Name="PortfolioListView" IsItemClickEnabled="True" SelectionChanged="SelectShare" ItemsSource="{Binding Items}">
                 <ListView.ItemContainerStyle>
