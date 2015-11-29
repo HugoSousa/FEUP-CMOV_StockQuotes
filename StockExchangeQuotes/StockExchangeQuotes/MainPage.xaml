@@ -6,16 +6,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:WinRTXamlToolkit.Controls"
     x:Class="StockExchangeQuotes.MainPage"
-    mc:Ignorable="d"
-    >
+    mc:Ignorable="d">
 
 
+    <d:Page.DataContext>
+        <local:MainPageViewModel />
+    </d:Page.DataContext>
+    
     <controls:DockPanel>
         <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" controls:DockPanel.Dock="Top">
         
             <TextBlock Text="PORTFOLIO" Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 30"/>
 
-            <ListView x:Name="lvDataBinding" IsItemClickEnabled="True" SelectionChanged="TestMethod">
+            <ListView x:Name="PortfolioListView" IsItemClickEnabled="True" SelectionChanged="SelectShare" ItemsSource="{Binding Items}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -35,9 +38,13 @@
 
 
         <controls:DockPanel VerticalAlignment="Bottom" controls:DockPanel.Dock="Bottom" LastChildFill="true">
-            <TextBlock Text="ADD TO PORTFOLIO" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" controls:DockPanel.Dock="Top"></TextBlock>
-            <Button Content="+" controls:DockPanel.Dock="Right"></Button>
-            <controls:AutoCompleteTextBox controls:DockPanel.Dock="Left" ></controls:AutoCompleteTextBox>
+            <!--<TextBlock Text="ADD TO PORTFOLIO" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" controls:DockPanel.Dock="Top"></TextBlock>-->
+            <!--<Button Content="+" controls:DockPanel.Dock="Right"></Button>-->
+            <AutoSuggestBox PlaceholderText="Add to Portfolio" QueryIcon="Add"
+                            TextChanged="AddToPortfolio_TextChanged"
+                            QuerySubmitted="AddToPortfolio_QuerySubmitted"
+                            SuggestionChosen="AddToPortfolio_SuggestionChosen"/>
+            <!--<controls:AutoCompleteTextBox controls:DockPanel.Dock="Left" ></controls:AutoCompleteTextBox>-->
         </controls:DockPanel>
         
     </controls:DockPanel>

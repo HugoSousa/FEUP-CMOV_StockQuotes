@@ -1536,6 +1536,14 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        }
+      },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
         "dependencies": {
           "WinRTXamlToolkit.UWP": "[1.9.4, )"
@@ -3180,6 +3188,14 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        }
+      },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
         "dependencies": {
           "WinRTXamlToolkit.UWP": "[1.9.4, )"
@@ -4794,6 +4810,14 @@
         },
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
         }
       },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
@@ -6445,6 +6469,14 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        }
+      },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
         "dependencies": {
           "WinRTXamlToolkit.UWP": "[1.9.4, )"
@@ -8059,6 +8091,14 @@
         },
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
         }
       },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
@@ -9710,6 +9750,14 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        }
+      },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
         "dependencies": {
           "WinRTXamlToolkit.UWP": "[1.9.4, )"
@@ -11324,6 +11372,14 @@
         },
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+        "compile": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll": {}
         }
       },
       "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
@@ -14696,6 +14752,53 @@
         "System.Xml.XmlSerializer.nuspec"
       ]
     },
+    "WinRTXamlToolkit.Controls.Calendar.UWP/1.9.4": {
+      "sha512": "MY2b+LgkexHFdvvH83rI3pA3LBwyseq2+hRqyeS9D+EP5RjIgf+5NIkM2fvdz28EUbagIB+eOs+6siXJHn2hMA==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.dll",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar.pri",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/bin/Release/Controls/Calendar/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/bin/Release/Themes/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/bin/x86/Debug/Controls/Calendar/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/bin/x86/Debug/Themes/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Common/StandardStyles.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/Calendar.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/Calendar.xbf",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/CalendarButton.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/CalendarButton.xbf",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/CalendarDayButton.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/CalendarDayButton.xbf",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/CalendarItem.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/CalendarItem.xbf",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Controls/Common/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/Controls/Calendar/Calendar.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/Controls/Calendar/CalendarButton.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/Controls/Calendar/CalendarDayButton.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/Controls/Calendar/CalendarItem.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/intermediatexaml/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/Themes/Generic.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/Release/WinRTXamlToolkit.Controls.Calendar/Themes/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/Controls/Calendar/Calendar.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/Controls/Calendar/CalendarButton.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/Controls/Calendar/CalendarDayButton.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/Controls/Calendar/CalendarItem.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/intermediatexaml/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/TempPE/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/Themes/Generic.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/WinRTXamlToolkit.Controls.Calendar/Controls/Calendar/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/obj/x86/Debug/WinRTXamlToolkit.Controls.Calendar/Themes/_._",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Properties/WinRTXamlToolkit.Controls.Calendar.UWP.rd.xml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Themes/Generic.xaml",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/Themes/Generic.xbf",
+        "lib/uap10.0/WinRTXamlToolkit.Controls.Calendar/WinRTXamlToolkit.Controls.Calendar.xr.xml",
+        "package/services/metadata/core-properties/9ea58689ea4847c7929efde4623552f4.psmdcp",
+        "WinRTXamlToolkit.Controls.Calendar.UWP.nuspec"
+      ]
+    },
     "WinRTXamlToolkit.Controls.DataVisualization.UWP/1.9.4": {
       "sha512": "F5SU2xFDNjRCY55BE8p3GzJUZ2A7qSeBHElSkn5JNUioqxnmmGHurkDODojB4aMn6xY/a+nI4xG2NUdhomI7/Q==",
       "type": "Package",
@@ -15099,6 +15202,7 @@
   "projectFileDependencyGroups": {
     "": [
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
+      "WinRTXamlToolkit.Controls.Calendar.UWP >= 1.9.4",
       "WinRTXamlToolkit.Controls.DataVisualization.UWP >= 1.9.4"
     ],
     "UAP,Version=v10.0": []

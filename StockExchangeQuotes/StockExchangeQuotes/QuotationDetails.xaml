@@ -7,32 +7,64 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
-    xmlns:Controls="using:WinRTXamlToolkit.Controls">
+    xmlns:Controls="using:WinRTXamlToolkit.Controls"
+    xmlns:globalization="using:Windows.Globalization"
+    xmlns:primitives="using:WinRTXamlToolkit.Controls.Primitives">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <d:Page.DataContext>
+        <local:QuotationDetailsViewModel />
+    </d:Page.DataContext>
 
-        <StackPanel Orientation="Vertical">
-            
-            <Charting:Chart Name="MyChart" Width="250" Height="300" Title="Chart" Margin="0">
-                <Charting:PieSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" IsSelectionEnabled="True" />
-            </Charting:Chart>
+    <ScrollViewer HorizontalScrollMode="Disabled" Width="Auto">
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-            <TextBlock Text="VALUE" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
-            <TextBlock Text="SOMETHING" HorizontalAlignment="Center"  Margin="0 0 0 20"></TextBlock>
+            <StackPanel Orientation="Vertical">
 
-            <TextBlock Text="NOTIFICATIONS" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="SHARE" Grid.Column="0"  Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 5"/>
+                    
+                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" >
+                        <SymbolIcon Symbol="OutlineStar"></SymbolIcon>
+                    </Button>
+                </Grid>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="ABOVE" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                <Controls:NumericUpDown ValueFormat="F0" Value="" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
-                <Button Content="X" Margin="8 0 0 0"></Button> <!-- TODO CHANGE TO IMAGE -->
+                <TextBlock Text="Name of the company" Margin="15 0 0 0"></TextBlock>
+                
+                <StackPanel Orientation="Horizontal" >
+                    
+                    <TextBlock Text="VALUE" Margin="15 0 0 0 "></TextBlock>
+                    <TextBlock Text="SOMETHING"></TextBlock>
+                </StackPanel>
+
+                
+                
+                <Charting:Chart Name="MyChart" Width="350" Height="300" Title="Chart" Margin="0">
+                    <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}"/>
+                    <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding Values2Evolution}"/>
+                </Charting:Chart>
+
+                
+                
+                <TextBlock Text="NOTIFICATIONS" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="ABOVE" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
+                    <Controls:NumericUpDown ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                    <Button Content="Clear" Margin="8 0 0 0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
+                    <TextBlock Text="BELOW" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
+                    <Controls:NumericUpDown ValueFormat="F0" Value="" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                    <Button Content="Clear" Margin="8 0 0 0"/>
+                </StackPanel>
+
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
-                <TextBlock Text="BELOW" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                <Controls:NumericUpDown ValueFormat="F0" Value="" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
-                <Button Content="X" Margin="8 0 0 0"></Button> <!-- TODO CHANGE TO IMAGE -->
-            </StackPanel>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>

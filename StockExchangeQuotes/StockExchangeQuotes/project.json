@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "WinRTXamlToolkit.Controls.Calendar.UWP": "1.9.4",
     "WinRTXamlToolkit.Controls.DataVisualization.UWP": "1.9.4"
   },
   "frameworks": {
