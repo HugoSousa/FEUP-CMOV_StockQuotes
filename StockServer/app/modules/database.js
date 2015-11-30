@@ -115,7 +115,6 @@ exports.getPortfolio = function(userid, cb){
                   symbol = line_fields[0].replace(/\"/g, "");
                   value = parseFloat(line_fields[1]);
                   //console.log(symbol + " / " + value);
-
                   for(var j = 0; j < rows.length; j++){
                     //console.log("SYMBOL1 " + rows[j]['symbol']);
                     //console.log("SYMBOL2 " + symbol);
@@ -172,6 +171,58 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
   });
 }
 
+exports.setFavoriteShare = function(userid,sharesymbol,cb) {
+    connection.query('select * from share where symbol = ?', [sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+              var share = rows[0];
+              var shareid = share.idshare;
+              connection.query('UPDATE user SET main_share= ? WHERE iduser = ?',[shareid, sharesymbol], function(err, rows, fields) {
+                 if (!err){
+                    cb(null,  "Successfully starred share " + sharesymbol);
+                }
+                  else{
+                  console.log('Error on share starring: ', err);
+                  cb(err,null);
+                }
+              })
+        }
+        else cb("Share not found", null);
+      }
+      else{
+        console.log('Error while performing search.');
+        cb(err, null);
+      }
+  });
+}
+
+exports.setLimits = function(userid, sharesymbol , limit_up, limit_down,cb) {
+    connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+              var share = rows[0];
+              var shareid = share.idshare;
+              var mapid = share.iduser_share;
+
+              connection.query('UPDATE user_share SET limit_up = ? , limit_down = ? WHERE iduser_share = ?', [limit_up, limit_down, mapid], function(err, rows, fields) {
+                   if (!err){
+                    cb(null,  "Successfully updated limits of share " + sharesymbol);
+                }
+                  else{
+                  console.log('Error on share limit updating: ', err);
+                  cb(err,null);
+                } 
+              });
+        }
+        else cb("Share not found in portfolio", null);
+      }
+      else{
+        console.log('Error while performing search.');
+        cb(err, null);
+      }
+  });
+}
+
 exports.getShare = function(userid, sharesymbol, cb) {
     connection.query('SELECT symbol, name, limit_down, limit_up, CASE WHEN s.idshare = u.main_share THEN TRUE ELSE FALSE END as is_main FROM user_share us join share s on us.idshare = s.idshare join user u on us.iduser = u.iduser where us.iduser = ? and s.symbol= ?', 
       [userid, sharesymbol], function (err, rows, fields) {
@@ -199,8 +250,14 @@ exports.getShare = function(userid, sharesymbol, cb) {
           var line = str.split('\n')[0];
           line_fields = line.split(",");
           symbol = line_fields[0].replace(/\"/g, "");
+          var date = line_fields[2].replace(/\"/g, "");
+          var time = line_fields[3].replace(/\"/g, "");
+
           value = parseFloat(line_fields[1]);
           rows[0]['value'] = value; 
+          rows[0]['date'] = date;
+          rows[0]['time'] = time;
+
           cb(null, rows[0]);
         });
       }
