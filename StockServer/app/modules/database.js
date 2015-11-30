@@ -115,7 +115,6 @@ exports.getPortfolio = function(userid, cb){
                   symbol = line_fields[0].replace(/\"/g, "");
                   value = parseFloat(line_fields[1]);
                   //console.log(symbol + " / " + value);
-
                   for(var j = 0; j < rows.length; j++){
                     //console.log("SYMBOL1 " + rows[j]['symbol']);
                     //console.log("SYMBOL2 " + symbol);
@@ -222,8 +221,14 @@ exports.getShare = function(userid, sharesymbol, cb) {
           var line = str.split('\n')[0];
           line_fields = line.split(",");
           symbol = line_fields[0].replace(/\"/g, "");
+          var date = line_fields[2].replace(/\"/g, "");
+          var time = line_fields[3].replace(/\"/g, "");
+
           value = parseFloat(line_fields[1]);
           rows[0]['value'] = value; 
+          rows[0]['date'] = date;
+          rows[0]['time'] = time;
+
           cb(null, rows[0]);
         });
       }
