@@ -132,7 +132,7 @@ router.route('/portfolio/setlimits')
 	.post([auth], function(req, res) {
 		var userid = req.user.iduser;
 		if (req.body.symbol != undefined && req.body.symbol != "" && typeof req.body.limit_up != 'undefined' && req.body.limit_up != "" && typeof req.body.limit_down != 'undefined' && req.body.limit_down != "") {
-		/*
+		
 		database.setLimits(userid, req.body.symbol,req.body.limit_up, req.body.limit_down, function(err, result){
 					if (err) {
 			           res.status(400).json({error: err});              
@@ -140,7 +140,7 @@ router.route('/portfolio/setlimits')
 			            res.status(200).json(result);   
 			        }
 				});
-		*/
+		
 		}  else {            
 	            res.status(200).json({error: "Missing share name or limits"});   
 	        }

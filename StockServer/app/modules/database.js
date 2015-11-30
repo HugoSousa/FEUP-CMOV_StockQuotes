@@ -195,6 +195,34 @@ exports.setFavoriteShare = function(userid,sharesymbol,cb) {
       }
   });
 }
+
+exports.setLimits = function(userid, sharesymbol , limit_up, limit_down,cb) {
+    connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+              var share = rows[0];
+              var shareid = share.idshare;
+              var mapid = share.iduser_share;
+
+              connection.query('UPDATE user_share SET limit_up = ? , limit_down = ? WHERE iduser_share = ?', [limit_up, limit_down, mapid], function(err, rows, fields) {
+                   if (!err){
+                    cb(null,  "Successfully updated limits of share " + sharesymbol);
+                }
+                  else{
+                  console.log('Error on share limit updating: ', err);
+                  cb(err,null);
+                } 
+              });
+        }
+        else cb("Share not found in portfolio", null);
+      }
+      else{
+        console.log('Error while performing search.');
+        cb(err, null);
+      }
+  });
+}
+
 exports.getShare = function(userid, sharesymbol, cb) {
     connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
     if (!err){
