@@ -10,13 +10,33 @@
     xmlns:Controls="using:WinRTXamlToolkit.Controls"
     xmlns:globalization="using:Windows.Globalization"
     xmlns:primitives="using:WinRTXamlToolkit.Controls.Primitives"
-    xmlns:dataVisualization="using:WinRTXamlToolkit.Controls.DataVisualization">
+    xmlns:dataVisualization="using:WinRTXamlToolkit.Controls.DataVisualization"
+    xmlns:interop="using:Windows.UI.Xaml.Interop">
 
+    <Page.Resources>
+        <Style x:Name="HorizontalLabelStyle" TargetType="Charting:AxisLabel">
+            
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="300"></RotateTransform>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"></Setter>
+            <Setter Property="StringFormat" Value="{}{0:dd/MM}"/>
+           
+        </Style>
+
+        <local:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
+    
     <d:Page.DataContext>
         <local:QuotationDetailsViewModel/>
     </d:Page.DataContext>
 
     <ScrollViewer HorizontalScrollMode="Disabled" Width="Auto">
+        
+
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
             <StackPanel Orientation="Vertical">
@@ -28,9 +48,12 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{Binding Symbol}" Grid.Column="0"  Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 5"/>
-                    
-                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" >
+
+                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" Click="MainClick" Visibility="{Binding Favorite, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
                         <SymbolIcon Symbol="OutlineStar"></SymbolIcon>
+                    </Button>
+                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" Click="MainClick" Visibility="{Binding Favorite, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <SymbolIcon Symbol="SolidStar"></SymbolIcon>
                     </Button>
                 </Grid>
 
@@ -41,9 +64,17 @@
                     <TextBlock Text="{Binding Value}"></TextBlock>
                 </StackPanel>
 
-                <Charting:Chart Title="Chart" Margin="0">
+                <Charting:Chart Width="350" Height="300" Title="Chart" Margin="0">
+                    <Charting:Chart.Axes>
+                        <Charting:DateTimeAxis AxisLabelStyle="{StaticResource HorizontalLabelStyle}" Orientation="X" IntervalType="Days">
+                        </Charting:DateTimeAxis>
+                    </Charting:Chart.Axes>
                     
-                    <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}"/>
+
+                    <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}">
+
+                    </Charting:LineSeries>
+                    
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding Values2Evolution}"/>
                 </Charting:Chart>
 
@@ -55,9 +86,10 @@
                     <Button Content="Clear" Margin="8 0 0 0"/>
                 </StackPanel>
 
+                
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
                     <TextBlock Text="BELOW" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                    <Controls:NumericUpDown Value="{Binding LimitDown}" ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                    <Controls:NumericUpDown Name="BelowBox" Value="{Binding LimitDown}"  ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
                     <Button Content="Clear" Margin="8 0 0 0"/>
                 </StackPanel>
 

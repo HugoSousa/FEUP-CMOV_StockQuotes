@@ -173,7 +173,8 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
 }
 
 exports.getShare = function(userid, sharesymbol, cb) {
-    connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
+    connection.query('SELECT symbol, name, limit_down, limit_up, CASE WHEN s.idshare = u.main_share THEN TRUE ELSE FALSE END as is_main FROM user_share us join share s on us.idshare = s.idshare join user u on us.iduser = u.iduser where us.iduser = ? and s.symbol= ?', 
+      [userid, sharesymbol], function (err, rows, fields) {
     if (!err){
       //cb(null,rows[0]);
       //get the value of the share
@@ -254,7 +255,7 @@ exports.getShareEvolution = function (symbol, start, end, cb) {
       for(var i = 1; i < lines.length - 1; i++){
         //date, open, high, low, close, volume, adj close
         line_fields = lines[i].split(",");
-        console.log(lines[i]);
+        //console.log(lines[i]);
 
         var date = line_fields[0];
         var high = parseFloat(line_fields[2]);

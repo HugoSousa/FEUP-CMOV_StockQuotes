@@ -36,7 +36,7 @@ namespace StockExchangeQuotes
     {
         //private List<Quotation> allItems = new List<Quotation>();
         //List<Quotation> items = new List<Quotation>();
-        private MainPageViewModel pageModel;
+        private readonly MainPageViewModel pageModel;
 
         public MainPage()
         {
@@ -55,7 +55,7 @@ namespace StockExchangeQuotes
         }
 
 
-        void SelectShare(object sender, SelectionChangedEventArgs e)
+        private void SelectShare(object sender, SelectionChangedEventArgs e)
         {
             Quotation SelectedQuotation = (Quotation)PortfolioListView.SelectedItem;
             string symbol = SelectedQuotation.Symbol;
@@ -64,7 +64,7 @@ namespace StockExchangeQuotes
 
 
 
-        private async void AddToPortfolio_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        private void AddToPortfolio_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             pageModel.AddToPortfolio_TextChanged(sender, args);
         }
@@ -245,18 +245,21 @@ namespace StockExchangeQuotes
             byte[] bytes = stream.ToArray();
             string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
 
-            //TODO GET ACCESS TOKEN FROM SETTINGS (Windows.Storage.ApplicationData.Current.LocalSettings)
-            request.Execute(
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo",
-                content);
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+
+            request.Execute((string)token, content);
         }
 
         private void RefreshPortfolio()
         {
             Items.Clear();
             APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.Portfolio, "portfolio");
-            //TODO GET ACCESS TOKEN FROM SETTINGS (Windows.Storage.ApplicationData.Current.LocalSettings)
-            request.Execute("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo", null);
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+
+            request.Execute((string)token, null);
             
         }
 
