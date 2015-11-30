@@ -9,10 +9,11 @@
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
     xmlns:Controls="using:WinRTXamlToolkit.Controls"
     xmlns:globalization="using:Windows.Globalization"
-    xmlns:primitives="using:WinRTXamlToolkit.Controls.Primitives">
+    xmlns:primitives="using:WinRTXamlToolkit.Controls.Primitives"
+    xmlns:dataVisualization="using:WinRTXamlToolkit.Controls.DataVisualization">
 
     <d:Page.DataContext>
-        <local:QuotationDetailsViewModel />
+        <local:QuotationDetailsViewModel/>
     </d:Page.DataContext>
 
     <ScrollViewer HorizontalScrollMode="Disabled" Width="Auto">
@@ -26,22 +27,22 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="SHARE" Grid.Column="0"  Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 5"/>
+                    <TextBlock Text="{Binding Symbol}" Grid.Column="0"  Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 5"/>
                     
                     <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" >
                         <SymbolIcon Symbol="OutlineStar"></SymbolIcon>
                     </Button>
                 </Grid>
 
-                <TextBlock Text="Name of the company" Margin="15 0 0 0"></TextBlock>
+                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Margin="15 0 0 0"></TextBlock>
 
                 <StackPanel Orientation="Horizontal" >
-
-                    <TextBlock Text="VALUE" Margin="15 0 0 0 "></TextBlock>
-                    <TextBlock Text="SOMETHING"></TextBlock>
+                    <TextBlock Text="[TIME] " Margin="15 0 0 0 "></TextBlock>
+                    <TextBlock Text="{Binding Value}"></TextBlock>
                 </StackPanel>
 
-                <Charting:Chart Width="350" Height="300" Title="Chart" Margin="0">
+                <Charting:Chart Title="Chart" Margin="0">
+                    
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}"/>
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding Values2Evolution}"/>
                 </Charting:Chart>
@@ -50,13 +51,13 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="ABOVE" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                    <Controls:NumericUpDown ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                    <Controls:NumericUpDown Value="{Binding LimitUp}" ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
                     <Button Content="Clear" Margin="8 0 0 0"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
                     <TextBlock Text="BELOW" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                    <Controls:NumericUpDown ValueFormat="F0" Value="" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
+                    <Controls:NumericUpDown Value="{Binding LimitDown}" ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
                     <Button Content="Clear" Margin="8 0 0 0"/>
                 </StackPanel>
 

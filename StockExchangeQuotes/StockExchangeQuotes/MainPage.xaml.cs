@@ -58,9 +58,8 @@ namespace StockExchangeQuotes
         void SelectShare(object sender, SelectionChangedEventArgs e)
         {
             Quotation SelectedQuotation = (Quotation)PortfolioListView.SelectedItem;
-            string name = SelectedQuotation.Name;
-            Frame.Navigate(typeof (QuotationDetails));
-            //var abc = SelectedBook.ID;
+            string symbol = SelectedQuotation.Symbol;
+            Frame.Navigate(typeof (QuotationDetails), symbol);
         }
 
 
@@ -104,8 +103,6 @@ namespace StockExchangeQuotes
 
     public class MainPageViewModel : INotifyPropertyChanged, OnApiRequestCompleted
     {
-        private string API_ADDRESS = "http://localhost:8080/api/";
-
         SharesSingleton ss = SharesSingleton.Instance;
 
         private ObservableCollection<Quotation> _items;

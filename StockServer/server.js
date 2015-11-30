@@ -9,6 +9,7 @@ var morgan     = require('morgan');
 var auth = require('./app/modules/userAuth.js');
 var async = require('async');
 var http = require('http');
+var moment = require('moment');
 
 // configure app
 app.use(morgan('dev')); // log requests to the console
@@ -120,7 +121,6 @@ router.get('/shares', function(req, res) {
 router.route('/share/:symbol')
 	.get([auth], function(req, res) {
 
-	console.log("AQUI");
 	var userid = req.user.iduser;
 	var symbol = req.params.symbol;
 
@@ -129,6 +129,34 @@ router.route('/share/:symbol')
 		else res.status(200).json(result);
 	})
 });
+
+router.get('/share/evolution/:symbol/:start?/:end?', function(req, res) {
+
+	var symbol = req.params.symbol;
+	var start;
+	var end;
+
+	if(req.params.start == null){
+		start = moment().subtract(30, 'days'); 
+	}else{
+		start = moment(start); //yyyy-mm-dd
+	}
+
+	if(req.params.end == null){
+		end = moment();
+	}else{
+		end = moment(end);
+	}
+	
+	console.log(symbol);
+	console.log(start);
+	console.log(end);
+
+	database.getShareEvolution(symbol, start, end, function(err, result) {
+		if (err) res.status(401).json({error: err});
+		else res.status(200).json(result);
+	})
+});	
 
 app.use('/api', router);
 

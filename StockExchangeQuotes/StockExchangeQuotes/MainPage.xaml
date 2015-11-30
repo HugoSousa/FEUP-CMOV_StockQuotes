@@ -51,6 +51,7 @@
         <CommandBar IsSticky="True" Grid.Row="2">
             <AppBarButton Icon="OtherUser" Label="Logout" Click="LogoutClick" Margin="0 0 10 0"/>
             <AppBarSeparator Margin="0 0 10 0"></AppBarSeparator>
+            <AppBarButton Icon="Refresh" Label="Refresh"/>
             <AppBarToggleButton Name="ButtonToggle" Icon="Add" Label="Add Share" Click="ToggleAddShare"/>
         </CommandBar>
 

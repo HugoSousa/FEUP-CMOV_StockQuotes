@@ -21,7 +21,9 @@ namespace StockExchangeQuotes
             Register,
             Portfolio,
             PortfolioAdd,
-            AllShares
+            AllShares,
+            Share,
+            ShareEvolution
         }
 
         private requestCodeType requestCode;
