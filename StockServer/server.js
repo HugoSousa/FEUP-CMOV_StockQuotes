@@ -27,6 +27,21 @@ var database = require('./app/modules/database.js');
 app.set('jwtTokenSecret', 'hastodosecrettosecrettootell');
 
 
+var n = require('./app/modules/notificationService')(database);
+
+var NotificationService = new n;
+
+NotificationService.prepCache(function (err) {
+	if (err) console.error("FATAL error: Loading cache failed", err);
+	else {
+		// TODO attempt reconnect to WebSocket if failure
+		require('./modules/event.ws-client')(WebSocket, eventServers, function (data, flags) {
+			State.messageHandler(data, flags);
+		});
+	}
+});
+
+
 // GENERAL ROUTING
 // =============================================================================
 
