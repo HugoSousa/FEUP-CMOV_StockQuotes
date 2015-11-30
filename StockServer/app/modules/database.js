@@ -172,6 +172,30 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
   });
 }
 
+exports.setFavoriteShare = function(userid,sharesymbol,cb) {
+    connection.query('select * from share where symbol = ?', [sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+              var share = rows[0];
+              var shareid = share.idshare;
+              connection.query('UPDATE user SET main_share= ? WHERE iduser = ?',[shareid, sharesymbol], function(err, rows, fields) {
+                 if (!err){
+                    cb(null,  "Successfully starred share " + sharesymbol);
+                }
+                  else{
+                  console.log('Error on share starring: ', err);
+                  cb(err,null);
+                }
+              })
+        }
+        else cb("Share not found", null);
+      }
+      else{
+        console.log('Error while performing search.');
+        cb(err, null);
+      }
+  });
+}
 exports.getShare = function(userid, sharesymbol, cb) {
     connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
     if (!err){
