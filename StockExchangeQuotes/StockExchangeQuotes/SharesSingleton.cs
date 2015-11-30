@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Windows.Data.Json;
+using Windows.UI.Xaml;
 using Windows.Web.Http;
 
 namespace StockExchangeQuotes
 {
     public class SharesSingleton: OnApiRequestCompleted
     {
-        private string API_ADDRESS = "http://localhost:8080/api/";
         private List<Quotation> allItems = new List<Quotation>();
 
         public List<Quotation>  AllItems

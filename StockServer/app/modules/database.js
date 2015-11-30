@@ -203,41 +203,104 @@ exports.getShare = function(userid, sharesymbol, cb) {
       //get the value of the share
       var str = '';
 
-            //http request to yahoo finance API
-            var options = {
-              host: 'finance.yahoo.com',
-              path: '/d/quotes?f=sl1d1t1v&s=' + sharesymbol,
-              method: 'GET'
-            };
+      //http request to yahoo finance API
+      var options = {
+        host: 'finance.yahoo.com',
+        path: '/d/quotes?f=sl1d1t1v&s=' + sharesymbol,
+        method: 'GET'
+      };
 
-            callback_yahoo = function(response) {
-              //another chunk of data has been recieved, so append it to `str`
-              response.on('data', function (chunk) {
-                str += chunk;
-              });
+      callback_yahoo = function(response) {
+        //another chunk of data has been recieved, so append it to `str`
+        response.on('data', function (chunk) {
+          str += chunk;
+        });
 
-              //the whole response has been received, so we just print it out here
-              response.on('end', function () {
-                //console.log(str);
-                var line = str.split('\n')[0];
-                line_fields = line.split(",");
-                symbol = line_fields[0].replace(/\"/g, "");
-                value = parseFloat(line_fields[1]);
-                rows[0]['value'] = value; 
-                cb(null, rows);
-              });
-            }
+        //the whole response has been received, so we just print it out here
+        response.on('end', function () {
+          //console.log(str);
+          var line = str.split('\n')[0];
+          line_fields = line.split(",");
+          symbol = line_fields[0].replace(/\"/g, "");
+          value = parseFloat(line_fields[1]);
+          rows[0]['value'] = value; 
+          cb(null, rows[0]);
+        });
+      }
 
-            var r = http.request(options, callback_yahoo)
-            r.on('error', function(error) {
-              console.log(error);
-            });
+      var r = http.request(options, callback_yahoo)
+      r.on('error', function(error) {
+        console.log(error);
+      });
 
-            r.end();
+      r.end();
     }
     else{
       console.log('Error while performing search.');
       cb(err, null);
     }
   });
+}
+
+exports.getShareEvolution = function (symbol, start, end, cb) {
+
+  var result = [];
+
+  var a = start.month();
+  var b = start.date();
+  var c = start.year();
+  var d = end.month();
+  var e = end.date();
+  var f = end.year();
+  var g = 'd'; //hardcoded daily for now
+
+  var request_string = "a=" + a + "&b=" + b + "&c=" + c + "&d=" + d + "&e=" + e + "&f=" + f + "&g=" + g + "&s=" + symbol;
+  console.log("REQUEST : " + request_string);
+
+  //http request to yahoo finance API
+  var options = {
+    host: 'ichart.finance.yahoo.com',
+    path: '/table.txt?' + request_string,
+    method: 'GET'
+  };
+
+  callback_yahoo = function(response) {
+    var str = '';
+    //another chunk of data has been recieved, so append it to `str`
+    response.on('data', function (chunk) {
+      str += chunk;
+    });
+
+    //the whole response has been received, so we just print it out here
+    response.on('end', function () {
+      //console.log(str);
+      var lines = str.split('\n');
+      for(var i = 1; i < lines.length - 1; i++){
+        //date, open, high, low, close, volume, adj close
+        line_fields = lines[i].split(",");
+        console.log(lines[i]);
+
+        var date = line_fields[0];
+        var high = parseFloat(line_fields[2]);
+        var low = parseFloat(line_fields[3]);
+
+        var result_point = {
+          date: date,
+          high: high,
+          low: low
+        }
+
+        result.push(result_point);
+      }
+      cb(null, result);
+    });
+  }
+
+  var r = http.request(options, callback_yahoo)
+  r.on('error', function(error) {
+    console.log(error);
+    cb(err, null);
+  });
+
+  r.end();
 }
