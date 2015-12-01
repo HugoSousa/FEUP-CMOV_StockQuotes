@@ -27,6 +27,18 @@ exports.getAllShares = function ( cb) {
   });
 }
 
+exports.getRelevantShares = function(cb) {
+    connection.query('select * from user_share, user where user.iduser = user_share.iduser;', [], function (err, rows, fields) {
+    if (!err){
+        cb(null, rows);
+      }
+      else{
+        console.log('Error while performing Query.');
+        cb(err,null);
+      }
+  });
+}
+
 
 exports.registeruser = function (user, cb) {
 //TODO add phone id
@@ -170,6 +182,7 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
       }
   });
 }
+
 
 exports.setFavoriteShare = function(userid,sharesymbol,cb) {
     connection.query('select * from share where symbol = ?', [sharesymbol], function (err, rows, fields) {
