@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using Windows.Data.Json;
 using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 
 namespace StockExchangeQuotes
@@ -25,7 +26,10 @@ namespace StockExchangeQuotes
             Share,
             ShareEvolution,
             Favorite,
-            Unfavorite
+            Unfavorite,
+            SetLimit,
+            ClearLimitUp,
+            ClearLimitDown
         }
 
         private requestCodeType requestCode;
@@ -43,7 +47,13 @@ namespace StockExchangeQuotes
         {
             Uri uri = new Uri(API_ADDRESS + path);
 
-            HttpClient client = new HttpClient();
+            var rootFilter = new HttpBaseProtocolFilter();
+
+            rootFilter.CacheControl.ReadBehavior = Windows.Web.Http.Filters.HttpCacheReadBehavior.MostRecent;
+            rootFilter.CacheControl.WriteBehavior = Windows.Web.Http.Filters.HttpCacheWriteBehavior.NoCache;
+
+            HttpClient client = new HttpClient(rootFilter);
+            //client.DefaultRequestHeaders.Add("timestamp", DateTime.Now.ToString());
             if(token != null)
                 client.DefaultRequestHeaders.Add("x-access-token", token);
 

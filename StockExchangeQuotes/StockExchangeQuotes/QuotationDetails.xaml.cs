@@ -52,6 +52,26 @@ namespace StockExchangeQuotes
         {
             pageModel.MainClick(sender, e);
         }
+
+        private void SetLimit(object sender, RoutedEventArgs e)
+        {
+            Quotation q = null;
+
+            if ((string)((Button)sender).Tag == "SetLimitUp")
+                q = new Quotation() {Symbol = pageModel.Symbol, Name = pageModel.Name, Value = pageModel.Value, LimitType = "Upper Limit"};
+            else if((string)((Button)sender).Tag == "SetLimitDown")
+                q = new Quotation() { Symbol = pageModel.Symbol, Name = pageModel.Name, Value = pageModel.Value, LimitType = "Lower Limit" };
+
+            Frame.Navigate(typeof (SetLimitDialog), q);
+        }
+        
+
+        private void ClearLimit(object sender, RoutedEventArgs e)
+        {
+            pageModel.ClearLimit(sender, e);
+        }
+
+
     }
 
     public class QuotationDetailsViewModel : INotifyPropertyChanged, OnApiRequestCompleted
@@ -115,13 +135,7 @@ namespace StockExchangeQuotes
 
         public double? LimitUp
         {
-            get
-            {
-                if (_limitUp.HasValue)
-                    return _limitUp;
-                else
-                    return -999;
-            }
+            get{ return _limitUp; }
             set
             {
                 if (_limitUp == value) return;
@@ -135,12 +149,7 @@ namespace StockExchangeQuotes
         public double? LimitDown
         {
             get
-            {
-                if (_limitDown.HasValue)
-                    return _limitDown;
-                else
-                    return -999;
-            }
+            { return _limitDown; }
             set
             {
                 if (_limitDown == value) return;
@@ -184,6 +193,19 @@ namespace StockExchangeQuotes
             }
         }
 
+        private string _time;
+
+        public string Time
+        {
+            get { return _time; }
+            set
+            {
+                if (_time == value) return;
+                _time = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -206,6 +228,7 @@ namespace StockExchangeQuotes
                     JsonObject json = JsonObject.Parse(result);
                     Name = json.GetNamedString("name");
                     Value = json.GetNamedNumber("value");
+                    Time = json.GetNamedString("time");
                     if (json.GetNamedValue("limit_down").ValueType != JsonValueType.Null)
                         LimitDown = json.GetNamedNumber("limit_down");
                     else
@@ -266,6 +289,29 @@ namespace StockExchangeQuotes
                         Favorite = false;
                     }
                 }
+            }else if (requestCode == APIRequest.requestCodeType.ClearLimitUp)
+            {
+                if (result != null)
+                {
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
+                    if (!json.ContainsKey("error"))
+                    {
+                        LimitUp = null;
+                    }
+                }
+            }
+            else if (requestCode == APIRequest.requestCodeType.ClearLimitDown)
+            {
+                if (result != null)
+                {
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
+                    if (!json.ContainsKey("error"))
+                    {
+                        LimitDown = null;
+                    }
+                }
             }
 
         }
@@ -303,6 +349,36 @@ namespace StockExchangeQuotes
                 request.Execute((string)token, null);
             }
 
+        }
+
+        public void ClearLimit(object sender, RoutedEventArgs routedEventArgs)
+        {
+            APIRequest request = null;
+
+            if((string)((Button)sender).Tag == "ClearUp") 
+                request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.ClearLimitUp, "portfolio/setlimitup");
+            else if((string)((Button)sender).Tag == "ClearDown")
+                request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.ClearLimitDown, "portfolio/setlimitdown");
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+
+
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"symbol", Symbol},
+                {"limit", null}
+            };
+            var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+            {
+                UseSimpleDictionaryFormat = true
+            });
+            MemoryStream stream = new MemoryStream();
+            serializer.WriteObject(stream, dict);
+            byte[] bytes = stream.ToArray();
+            string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+            request.Execute((string)token, content);
         }
     }
 }

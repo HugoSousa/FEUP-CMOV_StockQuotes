@@ -208,7 +208,7 @@ exports.unsetFavoriteShare = function(userid,cb) {
   });
 }
 
-exports.setLimits = function(userid, sharesymbol , limit_up, limit_down,cb) {
+exports.setLimitUp = function(userid, sharesymbol, limit_up, cb) {
     connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
     if (!err){
         if (rows[0] != undefined) {
@@ -216,9 +216,36 @@ exports.setLimits = function(userid, sharesymbol , limit_up, limit_down,cb) {
               var shareid = share.idshare;
               var mapid = share.iduser_share;
 
-              connection.query('UPDATE user_share SET limit_up = ? , limit_down = ? WHERE iduser_share = ?', [limit_up, limit_down, mapid], function(err, rows, fields) {
+              connection.query('UPDATE user_share SET limit_up = ? WHERE iduser_share = ?', [limit_up, mapid], function(err, rows, fields) {
                    if (!err){
-                    cb(null,  "Successfully updated limits of share " + sharesymbol);
+                    cb(null,  "Successfully updated limit up of share " + sharesymbol);
+                }
+                  else{
+                  console.log('Error on share limit updating: ', err);
+                  cb(err,null);
+                } 
+              });
+        }
+        else cb("Share not found in portfolio", null);
+      }
+      else{
+        console.log('Error while performing search.');
+        cb(err, null);
+      }
+  });
+}
+
+exports.setLimitDown = function(userid, sharesymbol, limit_down, cb) {
+    connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+              var share = rows[0];
+              var shareid = share.idshare;
+              var mapid = share.iduser_share;
+
+              connection.query('UPDATE user_share SET limit_down = ? WHERE iduser_share = ?', [limit_down, mapid], function(err, rows, fields) {
+                   if (!err){
+                    cb(null,  "Successfully updated limit down of share " + sharesymbol);
                 }
                   else{
                   console.log('Error on share limit updating: ', err);
@@ -301,7 +328,7 @@ exports.getShareEvolution = function (symbol, start, end, cb) {
   var g = 'd'; //hardcoded daily for now
 
   var request_string = "a=" + a + "&b=" + b + "&c=" + c + "&d=" + d + "&e=" + e + "&f=" + f + "&g=" + g + "&s=" + symbol;
-  console.log("REQUEST : " + request_string);
+  //console.log("REQUEST : " + request_string);
 
   //http request to yahoo finance API
   var options = {

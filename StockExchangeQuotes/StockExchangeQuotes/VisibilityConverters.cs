@@ -49,4 +49,30 @@ namespace StockExchangeQuotes
                 return Visibility.Collapsed;
         }
     }
+
+    public class NullVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string culture)
+        {
+            return value == null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class InvertedNullVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string culture)
+        {
+            return value == null ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

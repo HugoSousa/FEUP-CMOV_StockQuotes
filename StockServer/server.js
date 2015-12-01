@@ -156,12 +156,12 @@ router.route('/portfolio/unfavorite')
 		
 });
 
-router.route('/portfolio/setlimits')
+router.route('/portfolio/setlimitup')
 	.post([auth], function(req, res) {
 		var userid = req.user.iduser;
-		if (req.body.symbol != undefined && req.body.symbol != "" && typeof req.body.limit_up != 'undefined' && req.body.limit_up != "" && typeof req.body.limit_down != 'undefined' && req.body.limit_down != "") {
+		if (req.body.symbol != undefined && req.body.symbol != "" && typeof req.body.limit != 'undefined' && req.body.limit != "") {
 		
-		database.setLimits(userid, req.body.symbol,req.body.limit_up, req.body.limit_down, function(err, result){
+		database.setLimitUp(userid, req.body.symbol, req.body.limit, function(err, result){
 					if (err) {
 			           res.status(400).json({error: err});              
 			        } else {            
@@ -170,8 +170,27 @@ router.route('/portfolio/setlimits')
 				});
 		
 		}  else {            
-	            res.status(200).json({error: "Missing share name or limits"});   
+	            res.status(200).json({error: "Missing share name or limit"});   
 	        }
+		
+});
+
+router.route('/portfolio/setlimitdown')
+.post([auth], function(req, res) {
+	var userid = req.user.iduser;
+	if (req.body.symbol != undefined && req.body.symbol != "" && typeof req.body.limit != 'undefined' && req.body.limit != "") {
+	
+	database.setLimitDown(userid, req.body.symbol, req.body.limit, function(err, result){
+				if (err) {
+		           res.status(400).json({error: err});              
+		        } else {            
+		            res.status(200).json(result);   
+		        }
+			});
+	
+	}  else {            
+            res.status(200).json({error: "Missing share name or limits"});   
+        }
 		
 });
 
@@ -213,9 +232,9 @@ router.get('/share/evolution/:symbol/:start?/:end?', function(req, res) {
 		end = moment(end);
 	}
 	
-	console.log(symbol);
-	console.log(start);
-	console.log(end);
+	//console.log(symbol);
+	//console.log(start);
+	//console.log(end);
 
 	database.getShareEvolution(symbol, start, end, function(err, result) {
 		if (err) res.status(401).json({error: err});

@@ -66,7 +66,7 @@ namespace StockExchangeQuotes
                         
                         localSettings.Values["token"] = json.GetNamedString("token");
                         if(user.GetNamedValue("main_share").ValueType != JsonValueType.Null)
-                            localSettings.Values["main_share"] = user.GetNamedString("main_share");
+                            localSettings.Values["main_share"] = user.GetNamedNumber("main_share");
                         localSettings.Values["username"] = user.GetNamedString("login");
 
                         Frame.Navigate(typeof (MainPage));

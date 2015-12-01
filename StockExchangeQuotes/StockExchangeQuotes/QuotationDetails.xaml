@@ -28,6 +28,8 @@
 
         <local:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:NullVisibilityConverter x:Key="NullVisibilityConverter" />
+        <local:InvertedNullVisibilityConverter x:Key="InvertedNullVisibilityConverter" />
     </Page.Resources>
     
     <d:Page.DataContext>
@@ -57,20 +59,30 @@
                     </Button>
                 </Grid>
 
+
                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Margin="15 0 0 0"></TextBlock>
 
-                <StackPanel Orientation="Horizontal" >
-                    <TextBlock Text="[TIME] " Margin="15 0 0 0 "></TextBlock>
-                    <TextBlock Text="{Binding Value}"></TextBlock>
-                </StackPanel>
+                <Grid Margin="15 0 15 15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Value}" Grid.Column="0"></TextBlock>
+                    <TextBlock Text="{Binding Time}" Margin="0 0 0 15" Grid.Column="2"></TextBlock>
+                </Grid>
 
+                <StackPanel Orientation="Horizontal">
+                    <CalendarDatePicker></CalendarDatePicker>
+                    <CalendarDatePicker></CalendarDatePicker>
+                </StackPanel>
+                
                 <Charting:Chart Width="350" Height="300" Title="Chart" Margin="0">
                     <Charting:Chart.Axes>
                         <Charting:DateTimeAxis AxisLabelStyle="{StaticResource HorizontalLabelStyle}" Orientation="X" IntervalType="Days">
                         </Charting:DateTimeAxis>
                     </Charting:Chart.Axes>
                     
-
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}">
 
                     </Charting:LineSeries>
@@ -80,17 +92,18 @@
 
                 <TextBlock Text="NOTIFICATIONS" HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"></TextBlock>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="ABOVE" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                    <Controls:NumericUpDown Value="{Binding LimitUp}" ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
-                    <Button Content="Clear" Margin="8 0 0 0"/>
+                <Button Tag="SetLimitUp" Click="SetLimit" HorizontalAlignment="Center" Content="Add Upper Limit" Visibility="{Binding LimitUp, Converter={StaticResource InvertedNullVisibilityConverter}}" Margin="0 0 0 10"/>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Visibility="{Binding LimitUp, Converter={StaticResource NullVisibilityConverter}}" Margin="0 0 0 10">
+                    <TextBlock VerticalAlignment="Center" Text="Upper Limit:  " Margin="0 0 2 0"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding LimitUp}"></TextBlock>
+                    <Button Tag="ClearUp" Content="Clear" Margin="25 0 0 0" Click="ClearLimit"></Button>
                 </StackPanel>
 
-                
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
-                    <TextBlock Text="BELOW" VerticalAlignment="Center" Margin="0 0 10 0"></TextBlock>
-                    <Controls:NumericUpDown Name="BelowBox" Value="{Binding LimitDown}"  ValueFormat="F0" SmallChange="1" Maximum="10"></Controls:NumericUpDown>
-                    <Button Content="Clear" Margin="8 0 0 0"/>
+                <Button Tag="SetLimitDown" Click="SetLimit" HorizontalAlignment="Center" Content="Add Lower Limit" Visibility="{Binding LimitDown, Converter={StaticResource InvertedNullVisibilityConverter}}" Margin="0 0 0 10"/>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Visibility="{Binding LimitDown, Converter={StaticResource NullVisibilityConverter}}" Margin="0 0 0 10">
+                    <TextBlock Text="Lower Limit: "></TextBlock>
+                    <TextBlock Text="{Binding LimitDown}"></TextBlock>
+                    <Button Tag="ClearDown" Content="Clear" Margin="25 0 0 0" Click="ClearLimit"></Button>
                 </StackPanel>
 
             </StackPanel>
