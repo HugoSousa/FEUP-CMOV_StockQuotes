@@ -49,10 +49,10 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{Binding Symbol}" Grid.Column="0"  Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 5"/>
 
-                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" Click="MainClick" Visibility="{Binding Favorite, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" Click="MainClick" Visibility="{Binding Favorite, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <SymbolIcon Symbol="OutlineStar"></SymbolIcon>
                     </Button>
-                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" Click="MainClick" Visibility="{Binding Favorite, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button Grid.Column="2" Margin="0 0 15 0" Background="Transparent" Click="MainClick" Visibility="{Binding Favorite, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
                         <SymbolIcon Symbol="SolidStar"></SymbolIcon>
                     </Button>
                 </Grid>

@@ -214,9 +214,7 @@ namespace StockExchangeQuotes
                         LimitUp = json.GetNamedNumber("limit_up");
                     else
                         LimitUp = null;
-
-                    //TODO GET IF ITS FAVORITE SHARE. SET FAVORITE
-                    Favorite = true;
+                    Favorite = Convert.ToBoolean(json.GetNamedNumber("is_main"));
 
                 }
             }
@@ -228,10 +226,10 @@ namespace StockExchangeQuotes
                     Values2Evolution.Clear();
 
                     JsonArray json = JsonArray.Parse(result);
-                    var i = 0;
+                    //var i = 0;
                     foreach (var point in json)
                     {
-                        i++;
+                        //i++;
                         JsonObject jsonPoint = JsonObject.Parse(point.Stringify());
                         string date = jsonPoint.GetNamedString("date");
                         date = date.Substring(5, date.Length - 5);
@@ -249,52 +247,62 @@ namespace StockExchangeQuotes
             {
                 if (result != null)
                 {
-                    JsonObject json = JsonObject.Parse(result);
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
                     if (!json.ContainsKey("error"))
                     {
                         Favorite = true;
                     }
                 }
             }
+            else if (requestCode == APIRequest.requestCodeType.Unfavorite)
+            {
+                if (result != null)
+                {
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
+                    if (!json.ContainsKey("error"))
+                    {
+                        Favorite = false;
+                    }
+                }
+            }
+
         }
 
         public void MainClick(object sender, RoutedEventArgs routedEventArgs)
         {
-            
-            APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.Share, "portfolio/favorite");
-            Dictionary<string, string> dict = new Dictionary<string, string>()
+            if (Favorite == false)
             {
-                {"symbol", Symbol}
-            };
-            var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+                APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.Favorite, "portfolio/favorite");
+                Dictionary<string, string> dict = new Dictionary<string, string>()
+                {
+                    {"symbol", Symbol}
+                };
+                var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+                {
+                    UseSimpleDictionaryFormat = true
+                });
+                MemoryStream stream = new MemoryStream();
+                serializer.WriteObject(stream, dict);
+                byte[] bytes = stream.ToArray();
+                string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                var token = localSettings.Values["token"];
+
+                request.Execute((string) token, content);
+            }
+            else
             {
-                UseSimpleDictionaryFormat = true
-            });
-            MemoryStream stream = new MemoryStream();
-            serializer.WriteObject(stream, dict);
-            byte[] bytes = stream.ToArray();
-            string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+                APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.Unfavorite, "portfolio/unfavorite");
 
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            var token = localSettings.Values["token"];
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                var token = localSettings.Values["token"];
 
-            request.Execute((string)token, content);
-            
-        }
-    }
-    
-    public class InvertBoolConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            bool booleanValue = (bool)value;
-            return !booleanValue;
-        }
+                request.Execute((string)token, null);
+            }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            bool booleanValue = (bool)value;
-            return !booleanValue;
         }
     }
 }

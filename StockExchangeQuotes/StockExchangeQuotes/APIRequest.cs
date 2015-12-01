@@ -24,7 +24,8 @@ namespace StockExchangeQuotes
             AllShares,
             Share,
             ShareEvolution,
-            Favorite
+            Favorite,
+            Unfavorite
         }
 
         private requestCodeType requestCode;
@@ -53,8 +54,11 @@ namespace StockExchangeQuotes
             }else if (requestType == POST)
             {
                 HttpRequestMessage msg = new HttpRequestMessage(new HttpMethod("POST"), uri);
-                msg.Content = new HttpStringContent(content);
-                msg.Content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
+                if (content != null)
+                {
+                    msg.Content = new HttpStringContent(content);
+                    msg.Content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
+                }
                 response = await client.SendRequestAsync(msg).AsTask();
             }
 

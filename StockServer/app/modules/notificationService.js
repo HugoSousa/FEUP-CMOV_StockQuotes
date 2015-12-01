@@ -9,7 +9,7 @@ module.exports = function (database) {
 
 	state.prototype.prepCache = function (callback) {
 		setInterval(function () {
-			console.log("check");
+			//console.log("check");
 			//clearVisits();
 			//clearPositions();
 		}, 1000);

@@ -177,7 +177,7 @@ exports.setFavoriteShare = function(userid,sharesymbol,cb) {
         if (rows[0] != undefined) {
               var share = rows[0];
               var shareid = share.idshare;
-              connection.query('UPDATE user SET main_share= ? WHERE iduser = ?',[shareid, sharesymbol], function(err, rows, fields) {
+              connection.query('UPDATE user SET main_share= ? WHERE iduser = ?',[shareid, userid], function(err, rows, fields) {
                  if (!err){
                     cb(null,  "Successfully starred share " + sharesymbol);
                 }
@@ -193,6 +193,18 @@ exports.setFavoriteShare = function(userid,sharesymbol,cb) {
         console.log('Error while performing search.');
         cb(err, null);
       }
+  });
+}
+
+exports.unsetFavoriteShare = function(userid,cb) {
+  connection.query('UPDATE user SET main_share= null WHERE iduser = ?',[userid], function(err, rows, fields) {
+     if (!err){
+        cb(null,  "Successfully unstarred share.");
+    }
+      else{
+      console.log('Error on share unstarring: ', err);
+      cb(err,null);
+    }
   });
 }
 

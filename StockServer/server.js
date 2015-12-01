@@ -131,15 +131,28 @@ router.route('/portfolio/favorite')
 		var userid = req.user.iduser;
 		if (typeof req.body.symbol != 'undefined' && req.body.symbol != "") {
 		database.setFavoriteShare(userid, req.body.symbol, function(err, result){
-					if (err) {
-			           res.status(400).json({error: err});              
-			        } else {            
-			            res.status(200).json(result);   
-			        }
-				});
+			if (err) {
+	           res.status(400).json({error: err});              
+	        } else {            
+	            res.status(200).json(result);   
+	        }
+		});
 		}  else {            
-	            res.status(200).json({error: "Missing share name"});   
+            res.status(200).json({error: "Missing share name"});   
 	    }
+		
+});
+
+router.route('/portfolio/unfavorite')
+	.post([auth], function(req, res) {
+		var userid = req.user.iduser;
+		database.unsetFavoriteShare(userid, function(err, result){
+			if (err) {
+	           res.status(400).json({error: err});              
+	        } else {            
+	            res.status(200).json(result);   
+	        }
+		});
 		
 });
 
