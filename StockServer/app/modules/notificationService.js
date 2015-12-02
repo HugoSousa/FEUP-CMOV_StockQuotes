@@ -1,5 +1,6 @@
 var http = require('follow-redirects').http;
 var wns = require('wns');
+var async = require('async');
 
 // check if an element exists in array using a comparer function
 // comparer : function(currentElement)
@@ -27,24 +28,26 @@ module.exports = function (database) {
 
 	var state = function () {};
 
-	state.prototype.prepCache = function (callback) {
+	state.prototype.prepCache = function () {
+		processNotifications(database);
+
 		setInterval(function () {
 			processNotifications(database);
-		}, 5000);
+		}, 60000);
 	};
-
-	state.prototype.manualNotify = function (client, text, callback) {
+/*
+	state.prototype.manualN = function (client, text, callback) {
 		//external stub
-		notifyManual(client, text, callback);
+		nManual(client, text, callback);
 	};
 
-	var notifyManual = function (client, text, callback) {
+	var nManual = function (client, text, callback) {
 		 callback(null, "Client not subscribed");
 	}
-
+*/
 	var processNotifications = function(database) {
 		var sharesArray = {};
-
+		console.log("___ Starting Notification Service___")
 		database.getAllShares(function(error, result) {
 			if (error) console.log("Failure retrieving all shares on NS");
 			else {
@@ -146,6 +149,7 @@ module.exports = function (database) {
 				notifications.pushIfNotExist({
 					user: row.iduser,
 					username: row.login,
+					uri: row.channelUri,
 					type: "upper",
 					symbol: share.symbol,
 					name: share.name,
@@ -159,6 +163,7 @@ module.exports = function (database) {
 				notifications.pushIfNotExist({
 					user: row.iduser,
 					username: row.login,
+					uri: row.channelUri,
 					type: "lower",
 					symbol: share.symbol,
 					name: share.name,
@@ -177,6 +182,7 @@ module.exports = function (database) {
 			notifications.pushIfNotExist({
 				user: row.iduser,
 				username: row.login,
+				uri: row.channelUri,
 				type: "star",
 				symbol: share.symbol,
 				name: share.name,
@@ -190,23 +196,52 @@ module.exports = function (database) {
 
 
 	var notify = function(notifications) {
+		console.log(":::Notification count: " + notifications.length);
+		console.log(":::Now sending...");
 			//console.log(notifications);
-		notifications.forEach(function(notification) {
-			//console.log(notification);
+			var unsentNotifications = 0;
+			var sentNotifications = 0;
+			var failedNotifications = 0;
 
-			var channelUrl = 'https://db5.notify.windows.com/?token=AwYAAABAxUtJl1Mdb736%2fwatQv3h%2bRJxNOXceAzfQ0%2byNm9qgu9tz6Avr6JCfnI9QGWudz%2bd5dfmfQ9pgWTeJhXi2sbguGd5R42lCPpViBctc2R8nBIPoyl1zVU3jO06MRsOZtA%3d';
-			var options = {
-			    client_id: 'ms-app://s-1-15-2-1138758474-2145312275-3121119297-970850903-389564513-1170456302-860354335',
-			    client_secret: 'ivJo7vftYrwIoD4M4DgfYyegrztbtLja'   
-			};
-			/*
-			wns.sendTileSquareBlock(channelUrl, 'Yes!', 'It worked!', options, function (error, result) {
-			    if (error)
-			        console.error(error);
-			    else
-			        console.log(result);
-			});
-*/
+
+		async.each(notifications, function(notification, callback) {
+			//console.log(notification);
+			if (typeof notification.uri === 'undefined' || notification.uri == null || notification.uri == "") {
+				unsentNotifications ++;
+				callback();
+			} else {
+
+				var channelUri = notification.uri;
+				var options = {
+				    client_id: 'ms-app://s-1-15-2-1138758474-2145312275-3121119297-970850903-389564513-1170456302-860354335',
+				    client_secret: 'ivJo7vftYrwIoD4M4DgfYyegrztbtLja'   
+				};
+				wns.sendTileSquareBlock(channelUri, 'Yes!', 'It worked!', options, function (error, result) {
+				    if (error){
+				    	//console.error(error);
+				    	failedNotifications++;
+				    }
+				    else {
+				    	sentNotifications++;
+				    	//console.log(result);
+				    }
+				    callback();
+				});
+			}
+		}, function(err) {
+			if (err) {
+				console.log(err);
+			}
+			else {
+				console.log(":::Notifications sent: " + sentNotifications);
+				if (unsentNotifications != 0) console.log(":::Notifications dropped (URI not set): " + unsentNotifications);
+				if (failedNotifications != 0) console.log(":::Notifications failed: " + failedNotifications);
+				console.log("____________________________________")
+
+			}
+		})
+		notifications.forEach(function(notification) {
+
 
 		});
 
