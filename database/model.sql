@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: new_york_stock_exchange
 -- ------------------------------------------------------
--- Server version	5.6.27-log
+-- Server version 5.6.17
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -43,11 +43,12 @@ CREATE TABLE `user` (
   `login` varchar(45) NOT NULL,
   `password` varchar(256) NOT NULL,
   `main_share` int(11) DEFAULT NULL,
+  `channelUri` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`iduser`),
   UNIQUE KEY `login_UNIQUE` (`login`),
   KEY `fk_user_mainshare_idx` (`main_share`),
   CONSTRAINT `fk_user_mainshare` FOREIGN KEY (`main_share`) REFERENCES `share` (`idshare`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,7 +70,7 @@ CREATE TABLE `user_share` (
   KEY `fk_usershare_share_idx` (`idshare`),
   CONSTRAINT `fk_usershare_share` FOREIGN KEY (`idshare`) REFERENCES `share` (`idshare`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_usershare_user` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -81,4 +82,4 @@ CREATE TABLE `user_share` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-11-29 15:37:44
+-- Dump completed on 2015-12-02 15:00:03

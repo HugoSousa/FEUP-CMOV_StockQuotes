@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: new_york_stock_exchange
 -- ------------------------------------------------------
--- Server version	5.6.27-log
+-- Server version	5.6.17
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -31,7 +31,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'hugo','hugo',NULL);
+INSERT INTO `user` VALUES (1,'hugo','hugo',6802,'https://db5.notify.windows.com/?token=AwYAAABAxUtJl1Mdb736%2fwatQv3h%2bRJxNOXceAzfQ0%2byNm9qgu9tz6Avr6JCfnI9QGWudz%2bd5dfmfQ9pgWTeJhXi2sbguGd5R42lCPpViBctc2R8nBIPoyl1zVU3jO06MRsOZtA%3d'),(2,'chico','chico',NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -41,6 +41,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `user_share` WRITE;
 /*!40000 ALTER TABLE `user_share` DISABLE KEYS */;
+INSERT INTO `user_share` VALUES (1,1,1226,NULL,0),(3,2,5061,NULL,110),(4,2,1226,1.1,10),(5,1,6802,8000,0);
 /*!40000 ALTER TABLE `user_share` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-11-29 15:37:51
+-- Dump completed on 2015-12-02 15:00:31

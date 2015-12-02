@@ -227,6 +227,18 @@ exports.unsetFavoriteShare = function(userid,cb) {
   });
 }
 
+exports.updateChannelUri = function(userid, channelUri, cb) {
+  connection.query('UPDATE user SET channelUri= ? WHERE iduser = ?',[channelUri, userid], function(err, rows, fields) {
+     if (!err){
+        cb(null,  "Successfully updated channelUri.");
+    }
+      else{
+      console.log('Error on channel update: ', err);
+      cb(err,null);
+    }
+  });
+}
+
 exports.setLimitUp = function(userid, sharesymbol, limit_up, cb) {
     connection.query('SELECT * FROM user_share us join share s on us.idshare = s.idshare where us.iduser = ? and s.symbol = ?', [userid, sharesymbol], function (err, rows, fields) {
     if (!err){

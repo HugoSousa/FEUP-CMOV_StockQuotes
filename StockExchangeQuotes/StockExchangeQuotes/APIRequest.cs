@@ -30,7 +30,8 @@ namespace StockExchangeQuotes
             Unfavorite,
             SetLimit,
             ClearLimitUp,
-            ClearLimitDown
+            ClearLimitDown,
+            UpdateUri
         }
 
         private requestCodeType requestCode;

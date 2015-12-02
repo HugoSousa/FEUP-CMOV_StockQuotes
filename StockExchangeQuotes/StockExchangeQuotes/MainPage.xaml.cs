@@ -47,16 +47,11 @@ namespace StockExchangeQuotes
             pageModel = new MainPageViewModel();
             DataContext = pageModel;
 
-            channelURL();
+            pageModel.updateChannelUri();
 
         }
 
-        async private void channelURL()
-        {
-            PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-            string channelUri = channel.Uri;
-            Debug.Write(channelUri);
-        }
+
 
         private void SelectShare(object sender, SelectionChangedEventArgs e)
         {
@@ -231,6 +226,31 @@ namespace StockExchangeQuotes
 
         }
 
+        async public void updateChannelUri()
+        {
+            PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            string channelUri = channel.Uri;
+            APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.UpdateUri, "user/updatechannelUri");
+
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"channelUri", channelUri}
+            };
+            var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+            {
+                UseSimpleDictionaryFormat = true
+            });
+            MemoryStream stream = new MemoryStream();
+            serializer.WriteObject(stream, dict);
+            byte[] bytes = stream.ToArray();
+            string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+
+            request.Execute((string)token, content);
+        }
+
         internal void AddToPortfolio_SuggestionChosen(AutoSuggestBox sender,
             AutoSuggestBoxSuggestionChosenEventArgs args)
         {
@@ -261,6 +281,10 @@ namespace StockExchangeQuotes
                 else if (requestCode == APIRequest.requestCodeType.PortfolioAdd)
                 {
                     RefreshPortfolio();
+                }
+                else if (requestCode == APIRequest.requestCodeType.UpdateUri)
+                {
+                    // update sucessfull
                 }
             }
             else

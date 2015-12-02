@@ -156,6 +156,23 @@ router.route('/portfolio/unfavorite')
 		
 });
 
+router.route('/user/updatechannelUri')
+.post([auth], function(req, res) {
+	var userid = req.user.iduser;
+	if (typeof req.body.channelUri != 'undefined' && req.body.channelUri != "") {
+	database.updateChannelUri(userid, req.body.channelUri, function(err, result){
+		if (err) {
+           res.status(400).json({error: err});              
+        } else {            
+            res.status(200).json(result);   
+        }
+	});
+	}  else {            
+        res.status(200).json({error: "Missing channelUri"});   
+    }
+	
+});
+
 router.route('/portfolio/setlimitup')
 	.post([auth], function(req, res) {
 		var userid = req.user.iduser;
