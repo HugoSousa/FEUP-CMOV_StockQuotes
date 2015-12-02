@@ -8,6 +8,10 @@
     x:Class="StockExchangeQuotes.MainPage"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <local:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
+        <local:DoubleStringFormatConverter x:Key="DoubleStringFormatConverter" />
+    </Page.Resources>
 
     <d:Page.DataContext>
         <local:MainPageViewModel />
@@ -35,14 +39,22 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <TextBlock Text="{Binding Symbol}"/>
-                        <TextBlock Text="{Binding Value}"  TextAlignment="Right"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Symbol}" VerticalAlignment="Center" Grid.Column="0"/>
+                        <Button Grid.Column="1" Visibility="{Binding IsMain, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" Background="Transparent">
+                            <SymbolIcon Symbol="SolidStar" ></SymbolIcon>
+                        </Button>
+                        <TextBlock Text="{Binding Value, Converter={StaticResource DoubleStringFormatConverter}}" VerticalAlignment="Center" Grid.Column="3"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -51,7 +63,7 @@
         <CommandBar IsSticky="True" Grid.Row="2">
             <AppBarButton Icon="OtherUser" Label="Logout" Click="LogoutClick" Margin="0 0 10 0"/>
             <AppBarSeparator Margin="0 0 10 0"></AppBarSeparator>
-            <AppBarButton Icon="Refresh" Label="Refresh"/>
+            <AppBarButton Icon="Refresh" Label="Refresh" Click="RefreshPortfolio"/>
             <AppBarToggleButton Name="ButtonToggle" Icon="Add" Label="Add Share" Click="ToggleAddShare"/>
         </CommandBar>
 

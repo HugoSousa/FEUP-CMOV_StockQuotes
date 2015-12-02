@@ -75,4 +75,17 @@ namespace StockExchangeQuotes
             throw new NotImplementedException();
         }
     }
+
+    public class DoubleStringFormatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return ((double)value).ToString("F4");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return null;
+        }
+    }
 }

@@ -100,7 +100,7 @@
     <Compile Include="SetLimitDialog.xaml.cs">
       <DependentUpon>SetLimitDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisibilityConverters.cs" />
+    <Compile Include="Converters.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>

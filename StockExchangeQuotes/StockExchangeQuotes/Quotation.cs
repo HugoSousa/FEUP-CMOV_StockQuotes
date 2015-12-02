@@ -14,6 +14,8 @@ namespace StockExchangeQuotes
 
         public double Value { get; set; }
 
+        public bool IsMain { get; set; }
+
         //value to be used to pass parameters to SetLimitDialog
         public string LimitType { get; set; } 
 

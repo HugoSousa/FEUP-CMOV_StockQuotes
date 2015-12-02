@@ -20,6 +20,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.UI.Notifications;
 using Windows.Web.Http;
 using StockExchangeQuotes.Annotations;
 
@@ -30,7 +31,7 @@ namespace StockExchangeQuotes
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    
+
 
     public sealed partial class MainPage : Page
     {
@@ -44,20 +45,12 @@ namespace StockExchangeQuotes
 
             pageModel = new MainPageViewModel();
             DataContext = pageModel;
-            
-            /*
-            allItems.Add(new Quotation() { Name = "GOOG", Value = 1.323 });
-            allItems.Add(new Quotation() { Name = "APPL", Value = 1.101 });
-            allItems.Add(new Quotation() { Name = "IBM", Value = 0.922 });
-            allItems.Add(new Quotation() { Name = "GAGL", Value = 1.323 });
-            allItems.Add(new Quotation() { Name = "IAM", Value = 1.323 });
-            */
         }
 
 
         private void SelectShare(object sender, SelectionChangedEventArgs e)
         {
-            Quotation SelectedQuotation = (Quotation)PortfolioListView.SelectedItem;
+            Quotation SelectedQuotation = (Quotation) PortfolioListView.SelectedItem;
             string symbol = SelectedQuotation.Symbol;
             Frame.Navigate(typeof (QuotationDetails), symbol);
         }
@@ -86,8 +79,12 @@ namespace StockExchangeQuotes
 
         private void ToggleAddShare(object sender, RoutedEventArgs e)
         {
-            AddShareBox.Visibility = AddShareBox.Visibility == Visibility.Visible ? (Visibility.Collapsed) : Visibility.Visible;
-            ButtonToggle.Icon = AddShareBox.Visibility == Visibility.Visible ? new SymbolIcon(Symbol.Remove) : new SymbolIcon(Symbol.Add);
+            AddShareBox.Visibility = AddShareBox.Visibility == Visibility.Visible
+                ? (Visibility.Collapsed)
+                : Visibility.Visible;
+            ButtonToggle.Icon = AddShareBox.Visibility == Visibility.Visible
+                ? new SymbolIcon(Symbol.Remove)
+                : new SymbolIcon(Symbol.Add);
         }
 
         private void LogoutClick(object sender, RoutedEventArgs e)
@@ -98,6 +95,11 @@ namespace StockExchangeQuotes
             localSettings.Values["main_share"] = null;
             localSettings.Values["username"] = null;
             Frame.Navigate(typeof (Login));
+        }
+
+        private void RefreshPortfolio(object sender, RoutedEventArgs e)
+        {
+            pageModel.RefreshPortfolio();
         }
     }
 
@@ -118,6 +120,7 @@ namespace StockExchangeQuotes
                 OnPropertyChanged();
             }
         }
+
         /*
         public ObservableCollection<Quotation> AllItems
         {
@@ -130,56 +133,14 @@ namespace StockExchangeQuotes
             }
         }
         */
+
         public MainPageViewModel()
         {
             Items = new ObservableCollection<Quotation>();
             RefreshPortfolio();
-            //LoadAllItems();
-            /*
-            Items.Add(new Quotation() { Symbol = "GOOG", Value = 1.323 });
-            Items.Add(new Quotation() { Symbol = "APPL", Value = 1.101 });
-            Items.Add(new Quotation() { Symbol = "IBM", Value = 0.922 });
-            */
-            /*
-            AllItems = new ObservableCollection<Quotation>();
-            AllItems.Add(new Quotation() { Name = "IAM", Value = 1.323 });
-            AllItems.Add(new Quotation() { Name = "GOOG", Value = 1.323 });
-            AllItems.Add(new Quotation() { Name = "APPL", Value = 1.101 });
-            AllItems.Add(new Quotation() { Name = "IBM", Value = 0.922 });
-            AllItems.Add(new Quotation() { Name = "GAGL", Value = 1.323 });
-            */
-            
+
+
         }
-        /*
-        private async void LoadAllItems()
-        {
-            Uri uri = new Uri(API_ADDRESS + "shares");
-
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync(uri);
-
-            if (response.StatusCode != HttpStatusCode.Ok)
-            {
-                
-            }
-            else
-            {
-                string answer = await response.Content.ReadAsStringAsync();
-                JsonObject json = JsonObject.Parse(answer);
-                JsonArray resultArray = json.GetNamedArray("result");
-
-                foreach (var share in resultArray)
-                {
-                    JsonObject shareJson = JsonObject.Parse(share.Stringify());
-                    string symbol = shareJson.GetNamedString("symbol");
-                    string name = shareJson.GetNamedString("name");
-                    Quotation q = new Quotation() {Name = name, Symbol = symbol};
-                    AllItems.Add(q);
-                }
-
-            }
-        }
-        */
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -218,12 +179,10 @@ namespace StockExchangeQuotes
             {
                 AddPortfolioShare(sender.Text);
                 // User selected an item from the suggestion list, take an action on it here.
-                //TODO add only if it doesn't exist in the items yet. add in the db also
             }
             else
             {
                 // Use args.QueryText to determine what to do.
-                //TODO verify if the share in args.QueryText exists. If so, get from DB and add to Portfolio
                 AddPortfolioShare(args.QueryText);
             }
         }
@@ -248,32 +207,34 @@ namespace StockExchangeQuotes
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             var token = localSettings.Values["token"];
 
-            request.Execute((string)token, content);
+            request.Execute((string) token, content);
         }
 
-        private void RefreshPortfolio()
+        public void RefreshPortfolio()
         {
-            Items.Clear();
             APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.Portfolio, "portfolio");
 
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             var token = localSettings.Values["token"];
 
-            request.Execute((string)token, null);
-            
+            request.Execute((string) token, null);
+
         }
 
-        internal void AddToPortfolio_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        internal void AddToPortfolio_SuggestionChosen(AutoSuggestBox sender,
+            AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            sender.Text = ((Quotation)args.SelectedItem).Symbol;
+            sender.Text = ((Quotation) args.SelectedItem).Symbol;
         }
 
         public void onTaskCompleted(string result, APIRequest.requestCodeType requestCode)
         {
-            if (requestCode == APIRequest.requestCodeType.Portfolio)
+            if (result != null)
             {
-                if (result != null)
+                if (requestCode == APIRequest.requestCodeType.Portfolio)
                 {
+                    Items.Clear();
+
                     JsonArray json = JsonArray.Parse(result);
 
                     foreach (var share in json)
@@ -282,13 +243,27 @@ namespace StockExchangeQuotes
                         string symbol = shareObj.GetNamedString("symbol");
                         string name = shareObj.GetNamedString("name");
                         double value = shareObj.GetNamedNumber("value");
-                        Quotation q = new Quotation() { Name = name, Symbol = symbol, Value = value };
+                        bool isMain = shareObj.GetNamedBoolean("is_main");
+                        Quotation q = new Quotation() {Name = name, Symbol = symbol, Value = value, IsMain = isMain};
                         Items.Add(q);
                     }
                 }
-            }else if (requestCode == APIRequest.requestCodeType.PortfolioAdd)
+                else if (requestCode == APIRequest.requestCodeType.PortfolioAdd)
+                {
+                    RefreshPortfolio();
+                }
+            }
+            else
             {
-                RefreshPortfolio();
+                var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+                var txtNodes = toastXmlContent.GetElementsByTagName("text");
+                txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Server request failed."));
+                txtNodes[1].AppendChild(toastXmlContent.CreateTextNode("Server is down or you lost internet connection."));
+
+                var toast = new ToastNotification(toastXmlContent);
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                toastNotifier.Show(toast);
             }
         }
     }

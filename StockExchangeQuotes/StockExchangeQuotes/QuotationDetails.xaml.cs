@@ -21,6 +21,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using Windows.Data.Json;
 using Windows.UI.Core;
+using Windows.UI.Notifications;
 using StockExchangeQuotes.Annotations;
 using WinRTXamlToolkit;
 using WinRTXamlToolkit.Controls;
@@ -221,9 +222,9 @@ namespace StockExchangeQuotes
 
         public void onTaskCompleted(string result, APIRequest.requestCodeType requestCode)
         {
-            if (requestCode == APIRequest.requestCodeType.Share)
+            if (result != null)
             {
-                if (result != null)
+                if (requestCode == APIRequest.requestCodeType.Share)
                 {
                     JsonObject json = JsonObject.Parse(result);
                     Name = json.GetNamedString("name");
@@ -240,10 +241,7 @@ namespace StockExchangeQuotes
                     Favorite = Convert.ToBoolean(json.GetNamedNumber("is_main"));
 
                 }
-            }
-            else if(requestCode == APIRequest.requestCodeType.ShareEvolution)
-            {
-                if (result != null)
+                else if (requestCode == APIRequest.requestCodeType.ShareEvolution)
                 {
                     ValuesEvolution.Clear();
                     Values2Evolution.Clear();
@@ -264,11 +262,9 @@ namespace StockExchangeQuotes
                         ValuesEvolution.Add(new Tuple<DateTime, double>(date2, low));
                         Values2Evolution.Add(new Tuple<DateTime, double>(date2, high));
                     }
-                    
+
                 }
-            }else if (requestCode == APIRequest.requestCodeType.Favorite)
-            {
-                if (result != null)
+                else if (requestCode == APIRequest.requestCodeType.Favorite)
                 {
                     JsonObject json = new JsonObject();
                     JsonObject.TryParse(result, out json);
@@ -277,10 +273,7 @@ namespace StockExchangeQuotes
                         Favorite = true;
                     }
                 }
-            }
-            else if (requestCode == APIRequest.requestCodeType.Unfavorite)
-            {
-                if (result != null)
+                else if (requestCode == APIRequest.requestCodeType.Unfavorite)
                 {
                     JsonObject json = new JsonObject();
                     JsonObject.TryParse(result, out json);
@@ -289,9 +282,7 @@ namespace StockExchangeQuotes
                         Favorite = false;
                     }
                 }
-            }else if (requestCode == APIRequest.requestCodeType.ClearLimitUp)
-            {
-                if (result != null)
+                else if (requestCode == APIRequest.requestCodeType.ClearLimitUp)
                 {
                     JsonObject json = new JsonObject();
                     JsonObject.TryParse(result, out json);
@@ -300,10 +291,7 @@ namespace StockExchangeQuotes
                         LimitUp = null;
                     }
                 }
-            }
-            else if (requestCode == APIRequest.requestCodeType.ClearLimitDown)
-            {
-                if (result != null)
+                else if (requestCode == APIRequest.requestCodeType.ClearLimitDown)
                 {
                     JsonObject json = new JsonObject();
                     JsonObject.TryParse(result, out json);
@@ -312,6 +300,18 @@ namespace StockExchangeQuotes
                         LimitDown = null;
                     }
                 }
+            }
+            else
+            {
+                var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+                var txtNodes = toastXmlContent.GetElementsByTagName("text");
+                txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Server request failed."));
+                txtNodes[1].AppendChild(toastXmlContent.CreateTextNode("Server is down or you lost internet connection."));
+
+                var toast = new ToastNotification(toastXmlContent);
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                toastNotifier.Show(toast);
             }
 
         }

@@ -97,7 +97,6 @@ namespace StockExchangeQuotes
                 {
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
-                //rootFrame.Navigate(typeof(Login), e.Arguments);
 
             }
             // Ensure the current window is active
