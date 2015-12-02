@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Web.Http;
 using StockExchangeQuotes.Annotations;
+using Windows.Networking.PushNotifications;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -38,13 +39,15 @@ namespace StockExchangeQuotes
         //List<Quotation> items = new List<Quotation>();
         private readonly MainPageViewModel pageModel;
 
-        public MainPage()
+         public MainPage()
         {
             this.InitializeComponent();
 
             pageModel = new MainPageViewModel();
             DataContext = pageModel;
-            
+
+            channelURL();
+
             /*
             allItems.Add(new Quotation() { Name = "GOOG", Value = 1.323 });
             allItems.Add(new Quotation() { Name = "APPL", Value = 1.101 });
@@ -54,6 +57,12 @@ namespace StockExchangeQuotes
             */
         }
 
+        async private void channelURL()
+        {
+            PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            string channelUri = channel.Uri;
+            Debug.Write(channelUri);
+        }
 
         private void SelectShare(object sender, SelectionChangedEventArgs e)
         {

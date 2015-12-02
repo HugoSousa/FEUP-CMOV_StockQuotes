@@ -193,9 +193,10 @@ module.exports = function (database) {
 			//console.log(notifications);
 		notifications.forEach(function(notification) {
 			//console.log(notification);
-			var channelUrl = '{url to your application notification channel}';
+
+			var channelUrl = 'https://db5.notify.windows.com/?token=AwYAAABAxUtJl1Mdb736%2fwatQv3h%2bRJxNOXceAzfQ0%2byNm9qgu9tz6Avr6JCfnI9QGWudz%2bd5dfmfQ9pgWTeJhXi2sbguGd5R42lCPpViBctc2R8nBIPoyl1zVU3jO06MRsOZtA%3d';
 			var options = {
-			    client_id: '000000004C1727C9',
+			    client_id: 'ms-app://s-1-15-2-1138758474-2145312275-3121119297-970850903-389564513-1170456302-860354335',
 			    client_secret: 'ivJo7vftYrwIoD4M4DgfYyegrztbtLja'   
 			};
 			/*
@@ -206,6 +207,7 @@ module.exports = function (database) {
 			        console.log(result);
 			});
 */
+
 		});
 
 	}
