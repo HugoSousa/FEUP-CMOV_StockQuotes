@@ -8,6 +8,7 @@ using System.Text;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -33,12 +34,20 @@ namespace StockExchangeQuotes
 
         private void LoginClick(object sender, RoutedEventArgs e)
         {
+            if (UsernameField.Text == "" || PasswordField.Password == "")
+            {
+                ErrorField.Text = "All fields are mandatory.";
+                return;
+            }
+
+            ErrorField.Text = "";
+
             APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.Login, "login");
 
             Dictionary<string, string> dict = new Dictionary<string, string>()
             {
                 {"username", UsernameField.Text},
-                {"password", PasswordField.Text}
+                {"password", PasswordField.Password}
             };
             var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
             {
@@ -54,25 +63,47 @@ namespace StockExchangeQuotes
 
         public void onTaskCompleted(string result, APIRequest.requestCodeType requestCode)
         {
-            if (requestCode == APIRequest.requestCodeType.Login)
+            if (result != null)
             {
-                if (result != null)
+                if (requestCode == APIRequest.requestCodeType.Login)
                 {
                     JsonObject json = JsonObject.Parse(result);
                     if (!json.ContainsKey("error"))
                     {
                         var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
                         JsonObject user = json.GetNamedObject("user");
-                        
+
                         localSettings.Values["token"] = json.GetNamedString("token");
-                        if(user.GetNamedValue("main_share").ValueType != JsonValueType.Null)
+                        if (user.GetNamedValue("main_share").ValueType != JsonValueType.Null)
                             localSettings.Values["main_share"] = user.GetNamedNumber("main_share");
                         localSettings.Values["username"] = user.GetNamedString("login");
 
                         Frame.Navigate(typeof (MainPage));
+                        Frame.BackStack.Clear();
+                    }
+                    else
+                    {
+                        ErrorField.Text = json.GetNamedString("error");
                     }
                 }
             }
+            else
+            {
+                var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+                var txtNodes = toastXmlContent.GetElementsByTagName("text");
+                txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Server request failed."));
+                txtNodes[1].AppendChild(toastXmlContent.CreateTextNode("Server is down or you lost internet connection."));
+
+                var toast = new ToastNotification(toastXmlContent);
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                toastNotifier.Show(toast);
+            }
+        }
+
+        private void RegisterClick(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof (Register));
         }
     }
 }

@@ -71,7 +71,7 @@ exports.getUserByUsername = function (username, cb) {
 exports.getPortfolio = function(userid, cb){
 
   var portfolio_shares = '';
-  connection.query('select * from user_share where iduser = ?', [userid], function (err, rows, fields) {
+  connection.query('select idshare, main_share, limit_down, limit_up from user_share us join user u on us.iduser = u.iduser where u.iduser = ?', [userid], function (err, rows, fields) {
     if (!err){
       async.series([
           function(callback){
@@ -81,6 +81,10 @@ exports.getPortfolio = function(userid, cb){
                     portfolio_shares += rows1[0]['symbol'] + ',';
                     rows[index]['symbol'] = rows1[0]['symbol'];
                     rows[index]['name'] = rows1[0]['name'];
+                    if(rows[index]['main_share'] == rows1[0]['idshare'])
+                      rows[index]['is_main'] = true;
+                    else
+                      rows[index]['is_main'] = false;
                   }
                   else{
                     console.log('Error while performing Query.', err1);
@@ -94,6 +98,7 @@ exports.getPortfolio = function(userid, cb){
                   //cb(null, rows);
                   callback(null, 'one');
                 }else{
+                  console.log('Error2', err);
                   cb(err,null);
                 }
               }
@@ -154,6 +159,7 @@ exports.getPortfolio = function(userid, cb){
       });
           
     }else{
+      console.log('Error 3', err);
       cb(err,null);
     }
   });

@@ -17,14 +17,15 @@
             <TextBlock Text="Username" TextAlignment="Center" Margin="0 50 0 0" ></TextBlock>
             <TextBox TextAlignment="Center" Margin="30 10 30 0" Name="UsernameField"></TextBox>
             <TextBlock Text="Password" TextAlignment="Center" Margin="0 20 0 0"></TextBlock>
-            <TextBox TextAlignment="Center" Margin="30 10 30 0" Name="PasswordField"></TextBox>
-            <Button Content="Login" HorizontalAlignment="Center" Margin="0 20 0 0" Click="LoginClick"></Button>
+            <PasswordBox Margin="30 10 30 0" Name="PasswordField"></PasswordBox>
+            <TextBlock Name="ErrorField" HorizontalAlignment="Center" Margin="0 20 0 0" ></TextBlock>
+            <Button Content="Login" HorizontalAlignment="Center" Margin="0 10 0 0" Click="LoginClick"></Button>
             
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0 0 0 50">
             <TextBlock Text="Not registered yet?" TextAlignment="Center" Margin="0 0 0 10"></TextBlock>
-            <Button Content="Register" HorizontalAlignment="Center" ></Button>
+            <Button Content="Register" HorizontalAlignment="Center" Click="RegisterClick"></Button>
         </StackPanel>
     </Grid>
 </Page>

@@ -10,6 +10,7 @@ using System.Text;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -175,9 +176,9 @@ namespace StockExchangeQuotes
 
         public void onTaskCompleted(string result, APIRequest.requestCodeType requestCode)
         {
-            if (requestCode == APIRequest.requestCodeType.SetLimit)
+            if (result != null)
             {
-                if (result != null)
+                if (requestCode == APIRequest.requestCodeType.SetLimit)
                 {
                     JsonObject json = new JsonObject();
                     JsonObject.TryParse(result, out json);
@@ -187,6 +188,18 @@ namespace StockExchangeQuotes
                             NavigateBack();
                     }
                 }
+            }
+            else
+            {
+                var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+                var txtNodes = toastXmlContent.GetElementsByTagName("text");
+                txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Server request failed."));
+                txtNodes[1].AppendChild(toastXmlContent.CreateTextNode("Server is down or you lost internet connection."));
+
+                var toast = new ToastNotification(toastXmlContent);
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                toastNotifier.Show(toast);
             }
         }
     }

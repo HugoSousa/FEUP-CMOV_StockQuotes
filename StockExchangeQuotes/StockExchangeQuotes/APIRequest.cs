@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
@@ -57,10 +58,20 @@ namespace StockExchangeQuotes
             if(token != null)
                 client.DefaultRequestHeaders.Add("x-access-token", token);
 
+            System.Threading.CancellationTokenSource source = new System.Threading.CancellationTokenSource(2000);
+
             HttpResponseMessage response = null;
             if (requestType == GET)
             {
-                response = await client.GetAsync(uri);
+                try
+                {
+                    response = await client.GetAsync(uri).AsTask(source.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    response = null;
+                }
+
             }else if (requestType == POST)
             {
                 HttpRequestMessage msg = new HttpRequestMessage(new HttpMethod("POST"), uri);
@@ -69,10 +80,23 @@ namespace StockExchangeQuotes
                     msg.Content = new HttpStringContent(content);
                     msg.Content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
                 }
-                response = await client.SendRequestAsync(msg).AsTask();
+
+                try
+                {
+                    response = await client.SendRequestAsync(msg).AsTask(source.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    response = null;
+                }
             }
 
-            if (response.StatusCode == HttpStatusCode.Ok)
+            if (response == null)
+            {
+                if (listener != null)
+                    listener.onTaskCompleted(null, requestCode);
+            }
+            else
             {
                 string answer = await response.Content.ReadAsStringAsync();
 

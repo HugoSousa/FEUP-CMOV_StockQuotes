@@ -31,9 +31,7 @@ namespace StockExchangeQuotes
         private void LoadAllItems()
         {
             APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.AllShares, "shares");
-            request.Execute(
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodWdvIiwiZXhwIjoxNDQ5NDIxMjgxOTEwfQ.n_MNFrjav_LPYCyTBx-u8ol0JUAJzUqlMtcoA1nufOo",
-                null);
+            request.Execute(null, null);
         }
 
         public void onTaskCompleted(string result, APIRequest.requestCodeType requestCode)
