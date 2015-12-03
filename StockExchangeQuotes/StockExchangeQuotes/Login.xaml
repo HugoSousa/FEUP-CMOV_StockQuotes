@@ -8,13 +8,18 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        
         <StackPanel Orientation="Vertical" Grid.Row="0">
-            <TextBlock Text="Username" TextAlignment="Center" Margin="0 50 0 0" ></TextBlock>
+            <TextBlock Text="Exchange Stocks" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center"  Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 0"/>
+            
+            <TextBlock Text="Username" TextAlignment="Center" Margin="0 20 0 0" ></TextBlock>
             <TextBox TextAlignment="Center" Margin="30 10 30 0" Name="UsernameField"></TextBox>
             <TextBlock Text="Password" TextAlignment="Center" Margin="0 20 0 0"></TextBlock>
             <PasswordBox Margin="30 10 30 0" Name="PasswordField"></PasswordBox>

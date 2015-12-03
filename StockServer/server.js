@@ -239,29 +239,37 @@ router.route('/share/:symbol')
 	})
 });
 
-router.get('/share/evolution/:symbol/:start?/:end?', function(req, res) {
+router.get('/share/evolution/:symbol/:start?/:end?/:periodicity?', function(req, res) {
 
 	var symbol = req.params.symbol;
 	var start;
 	var end;
+	var periodicity;
+
+	//console.log(req.params.start);
 
 	if(req.params.start == null){
 		start = moment().subtract(30, 'days'); 
 	}else{
-		start = moment(start); //yyyy-mm-dd
+		start = moment(req.params.start); //yyyy-mm-dd
 	}
 
 	if(req.params.end == null){
 		end = moment();
 	}else{
-		end = moment(end);
+		end = moment(req.params.end);
 	}
 	
+	if(req.params.periodicity == null){
+		periodicity = 'd';
+	}else{
+		periodicity = req.params.periodicity;
+	}
 	//console.log(symbol);
 	//console.log(start);
 	//console.log(end);
 
-	database.getShareEvolution(symbol, start, end, function(err, result) {
+	database.getShareEvolution(symbol, start, end, periodicity, function(err, result) {
 		if (err) res.status(401).json({error: err});
 		else res.status(200).json(result);
 	})

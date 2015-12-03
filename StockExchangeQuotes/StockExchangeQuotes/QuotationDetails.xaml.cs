@@ -35,6 +35,7 @@ namespace StockExchangeQuotes
     /// </summary>
     public sealed partial class QuotationDetails : Page
     {
+
         private QuotationDetailsViewModel pageModel;
         public QuotationDetails()
         {
@@ -43,6 +44,8 @@ namespace StockExchangeQuotes
             pageModel.NavigatePortfolio += NavigatePortfolio;
             DataContext = pageModel;
             
+            FromCalendar.Date = DateTime.Now.AddDays(-30);
+            ToCalendar.Date = DateTime.Now;
         }
 
         private void NavigatePortfolio()
@@ -122,7 +125,13 @@ namespace StockExchangeQuotes
             }
 
         }
-        
+
+        private void RefreshChartClick(object sender, RoutedEventArgs e)
+        {
+            pageModel.ToDate = ToCalendar.Date;
+            pageModel.FromDate = FromCalendar.Date;
+            pageModel.UpdateChart();
+        }
     }
 
     public class QuotationDetailsViewModel : INotifyPropertyChanged, OnApiRequestCompleted
@@ -152,18 +161,9 @@ namespace StockExchangeQuotes
             var token = localSettings.Values["token"];
             request.Execute((string) token, null);
 
-            UpdateGraph(null, null, null);
+            UpdateChart();
         }
-
-        private void UpdateGraph(string start, string end, string periodicity)
-        {
-            APIRequest request = null;
-            if (start == null && end == null)
-                request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.ShareEvolution, "share/evolution/" + Symbol);
-            
-            request.Execute(null, null);
-        }
-
+        
         private string _name;
 
         public string Name
@@ -265,6 +265,47 @@ namespace StockExchangeQuotes
             }
         }
 
+        private DateTimeOffset? _fromDate;
+
+        public DateTimeOffset? FromDate
+        {
+            get { return _fromDate; }
+            set
+            {
+                if (_fromDate == value) return;
+                _fromDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTimeOffset? _toDate;
+
+        public DateTimeOffset? ToDate
+        {
+            get { return _toDate; }
+            set
+            {
+                if (_toDate == value) return;
+                _toDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _chartPeriodicity;
+
+        public string ChartPeriodicity
+        {
+            get { return _chartPeriodicity; }
+            set
+            {
+                if (_chartPeriodicity == value) return;
+                _chartPeriodicity = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        public ObservableCollection<ComboBoxItemString> PeriodicityList { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -275,6 +316,12 @@ namespace StockExchangeQuotes
 
         public QuotationDetailsViewModel()
         {
+            PeriodicityList = new ObservableCollection<ComboBoxItemString>();
+            PeriodicityList.Add(new ComboBoxItemString() { ValueString = "Daily", ID = "d"});
+            PeriodicityList.Add(new ComboBoxItemString() { ValueString = "Weekly", ID = "w" });
+            PeriodicityList.Add(new ComboBoxItemString() { ValueString = "Monthly", ID = "m" });
+
+            ChartPeriodicity = "d";
         }
        
 
@@ -311,12 +358,12 @@ namespace StockExchangeQuotes
                         //i++;
                         JsonObject jsonPoint = JsonObject.Parse(point.Stringify());
                         string date = jsonPoint.GetNamedString("date");
-                        date = date.Substring(5, date.Length - 5);
+                        //date = date.Substring(5, date.Length - 5);
                         double high = jsonPoint.GetNamedNumber("high");
                         double low = jsonPoint.GetNamedNumber("low");
 
                         var split = date.Split('-');
-                        DateTime date2 = new DateTime(2015, Int32.Parse(split[0]), Int32.Parse(split[1]));
+                        DateTime date2 = new DateTime(Int32.Parse(split[0]), Int32.Parse(split[1]), Int32.Parse(split[2]));
                         ValuesEvolution.Add(new Tuple<DateTime, double>(date2, low));
                         Values2Evolution.Add(new Tuple<DateTime, double>(date2, high));
                     }
@@ -418,6 +465,47 @@ namespace StockExchangeQuotes
 
         }
 
+        public void UpdateChart()
+        {
+
+            string path = "share/evolution/" + Symbol;
+
+            if (FromDate != null)
+            {
+                if (ToDate != null)
+                {
+                    if (FromDate.Value < ToDate.Value)
+                    {
+                        string fromDateString = FromDate.Value.ToString("yyyy-MM-dd");
+                        string toDateString = ToDate.Value.ToString("yyyy-MM-dd");
+                        path += "/" + fromDateString + "/" + toDateString;
+
+                        if (ChartPeriodicity != null)
+                            path += "/" + ChartPeriodicity;
+                    }
+                    else
+                    {
+                        var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+                        var txtNodes = toastXmlContent.GetElementsByTagName("text");
+                        txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Invalid dates."));
+                        txtNodes[1].AppendChild(toastXmlContent.CreateTextNode(""));
+
+                        var toast = new ToastNotification(toastXmlContent);
+                        var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                        toastNotifier.Show(toast);
+                        return;
+                    }
+                }
+            }
+
+            
+
+            APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.ShareEvolution, path);
+            request.Execute(null, null);
+
+        }
+
         public void ClearLimit(object sender, RoutedEventArgs routedEventArgs)
         {
             APIRequest request = null;
@@ -470,5 +558,13 @@ namespace StockExchangeQuotes
 
             request.Execute((string)token, content);
         }
+    }
+
+
+    public class ComboBoxItemString
+    {
+        public string ValueString { get; set; }
+
+        public string ID { get; set; }
     }
 }

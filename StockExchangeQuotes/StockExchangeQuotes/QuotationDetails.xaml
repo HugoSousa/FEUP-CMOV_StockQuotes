@@ -11,7 +11,8 @@
     xmlns:globalization="using:Windows.Globalization"
     xmlns:primitives="using:WinRTXamlToolkit.Controls.Primitives"
     xmlns:dataVisualization="using:WinRTXamlToolkit.Controls.DataVisualization"
-    xmlns:interop="using:Windows.UI.Xaml.Interop">
+    xmlns:interop="using:Windows.UI.Xaml.Interop"
+    xmlns:system="using:System">
 
     <Page.BottomAppBar>
         <CommandBar>
@@ -19,10 +20,10 @@
             <AppBarButton Icon="Clear" Label="Delete" Click="Delete"/>
         </CommandBar>
     </Page.BottomAppBar>
-    
+
     <Page.Resources>
         <Style x:Name="HorizontalLabelStyle" TargetType="Charting:AxisLabel">
-            
+
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <RotateTransform Angle="300"></RotateTransform>
@@ -30,7 +31,7 @@
             </Setter>
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"></Setter>
             <Setter Property="StringFormat" Value="{}{0:dd/MM}"/>
-           
+
         </Style>
 
         <local:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
@@ -77,12 +78,25 @@
                     <TextBlock Text="{Binding Time}" Margin="0 0 0 15" Grid.Column="2"></TextBlock>
                 </Grid>
 
-                <StackPanel Orientation="Horizontal">
-                    <CalendarDatePicker></CalendarDatePicker>
-                    <CalendarDatePicker></CalendarDatePicker>
-                </StackPanel>
                 
-                <Charting:Chart Height="300" Margin="0 0 20 0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="15 0 15 0">
+                    <StackPanel Orientation="Vertical" Margin="0 0 5 0">
+                        <TextBlock Text="From" TextAlignment="Center"></TextBlock>
+                        <CalendarDatePicker Name="FromCalendar"></CalendarDatePicker>
+                        <ComboBox PlaceholderText="Periodicity" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding PeriodicityList, Mode=TwoWay}"
+                                  DisplayMemberPath="ValueString" SelectedValuePath="ID" SelectedValue="{Binding ChartPeriodicity, Mode=TwoWay}">
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5 0 0 0">
+                        <TextBlock Text="To" TextAlignment="Center"></TextBlock>
+                        <CalendarDatePicker Name="ToCalendar"></CalendarDatePicker>
+                        <Button Margin="0 5 0 0" HorizontalAlignment="Stretch" Click="RefreshChartClick">
+                            <SymbolIcon Symbol="Sync"></SymbolIcon>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                    <Charting:Chart Height="300" Margin="0 0 10 0">
                     <Charting:Chart.LegendStyle>
                         <Style TargetType="FrameworkElement">
                             <Setter Property="Width" Value="0" />

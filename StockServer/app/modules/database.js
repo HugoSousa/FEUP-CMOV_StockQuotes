@@ -379,7 +379,7 @@ exports.getShare = function(userid, sharesymbol, cb) {
   });
 }
 
-exports.getShareEvolution = function (symbol, start, end, cb) {
+exports.getShareEvolution = function (symbol, start, end, periodicity, cb) {
 
   var result = [];
 
@@ -389,7 +389,7 @@ exports.getShareEvolution = function (symbol, start, end, cb) {
   var d = end.month();
   var e = end.date();
   var f = end.year();
-  var g = 'd'; //hardcoded daily for now
+  var g = periodicity;
 
   var request_string = "a=" + a + "&b=" + b + "&c=" + c + "&d=" + d + "&e=" + e + "&f=" + f + "&g=" + g + "&s=" + symbol;
   //console.log("REQUEST : " + request_string);
@@ -433,7 +433,7 @@ exports.getShareEvolution = function (symbol, start, end, cb) {
     });
   }
 
-  var r = http.request(options, callback_yahoo)
+  var r = http.request(options, callback_yahoo);
   r.on('error', function(error) {
     console.log(error);
     cb(err, null);
