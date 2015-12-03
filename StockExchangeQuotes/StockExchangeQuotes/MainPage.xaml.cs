@@ -228,27 +228,46 @@ namespace StockExchangeQuotes
 
         async public void updateChannelUri()
         {
-            PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-            string channelUri = channel.Uri;
-            APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.UpdateUri, "user/updatechannelUri");
+            PushNotificationChannel channel;
+            try
+            {
+                //TODO subscribe to NetworkStatusChanged if channel is null
+                channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                string channelUri = channel.Uri;
+                APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.UpdateUri, "user/updatechannelUri");
 
-            Dictionary<string, string> dict = new Dictionary<string, string>()
+                Dictionary<string, string> dict = new Dictionary<string, string>()
             {
                 {"channelUri", channelUri}
             };
-            var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+                var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+                {
+                    UseSimpleDictionaryFormat = true
+                });
+                MemoryStream stream = new MemoryStream();
+                serializer.WriteObject(stream, dict);
+                byte[] bytes = stream.ToArray();
+                string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                var token = localSettings.Values["token"];
+
+                request.Execute((string)token, content);
+            }
+
+            catch (Exception ex)
             {
-                UseSimpleDictionaryFormat = true
-            });
-            MemoryStream stream = new MemoryStream();
-            serializer.WriteObject(stream, dict);
-            byte[] bytes = stream.ToArray();
-            string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+                var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            var token = localSettings.Values["token"];
+                var txtNodes = toastXmlContent.GetElementsByTagName("text");
+                txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Push notification service connection failed."));
+                txtNodes[1].AppendChild(toastXmlContent.CreateTextNode(ex.Message));
 
-            request.Execute((string)token, content);
+                var toast = new ToastNotification(toastXmlContent);
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                toastNotifier.Show(toast);
+            }
+             
         }
 
         internal void AddToPortfolio_SuggestionChosen(AutoSuggestBox sender,
