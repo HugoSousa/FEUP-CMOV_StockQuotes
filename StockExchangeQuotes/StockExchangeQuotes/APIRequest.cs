@@ -23,6 +23,7 @@ namespace StockExchangeQuotes
             Register,
             Portfolio,
             PortfolioAdd,
+            PortfolioRemove,
             AllShares,
             Share,
             ShareEvolution,

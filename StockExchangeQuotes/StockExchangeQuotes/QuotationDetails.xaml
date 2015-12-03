@@ -13,6 +13,13 @@
     xmlns:dataVisualization="using:WinRTXamlToolkit.Controls.DataVisualization"
     xmlns:interop="using:Windows.UI.Xaml.Interop">
 
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Refresh" Label="Refresh" Click="Refresh"/>
+            <AppBarButton Icon="Clear" Label="Delete" Click="Delete"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+    
     <Page.Resources>
         <Style x:Name="HorizontalLabelStyle" TargetType="Charting:AxisLabel">
             
@@ -37,10 +44,8 @@
     </d:Page.DataContext>
 
     <ScrollViewer HorizontalScrollMode="Disabled" Width="Auto">
-        
 
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
             <StackPanel Orientation="Vertical">
 
                 <Grid>
@@ -77,15 +82,18 @@
                     <CalendarDatePicker></CalendarDatePicker>
                 </StackPanel>
                 
-                <Charting:Chart Width="350" Height="300" Title="Chart" Margin="0">
+                <Charting:Chart Height="300" Margin="0 0 20 0">
+                    <Charting:Chart.LegendStyle>
+                        <Style TargetType="FrameworkElement">
+                            <Setter Property="Width" Value="0" />
+                        </Style>
+                    </Charting:Chart.LegendStyle>
                     <Charting:Chart.Axes>
                         <Charting:DateTimeAxis AxisLabelStyle="{StaticResource HorizontalLabelStyle}" Orientation="X" IntervalType="Days">
                         </Charting:DateTimeAxis>
                     </Charting:Chart.Axes>
                     
-                    <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}">
-
-                    </Charting:LineSeries>
+                    <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding ValuesEvolution}"/>
                     
                     <Charting:LineSeries Margin="0" IndependentValuePath="Item1" DependentValuePath="Item2" ItemsSource="{Binding Values2Evolution}"/>
                 </Charting:Chart>
@@ -101,8 +109,8 @@
 
                 <Button Tag="SetLimitDown" Click="SetLimit" HorizontalAlignment="Center" Content="Add Lower Limit" Visibility="{Binding LimitDown, Converter={StaticResource InvertedNullVisibilityConverter}}" Margin="0 0 0 10"/>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Visibility="{Binding LimitDown, Converter={StaticResource NullVisibilityConverter}}" Margin="0 0 0 10">
-                    <TextBlock Text="Lower Limit: "></TextBlock>
-                    <TextBlock Text="{Binding LimitDown}"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" Text="Lower Limit: "></TextBlock>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding LimitDown}"></TextBlock>
                     <Button Tag="ClearDown" Content="Clear" Margin="25 0 0 0" Click="ClearLimit"></Button>
                 </StackPanel>
 

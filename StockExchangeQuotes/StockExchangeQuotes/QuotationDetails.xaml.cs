@@ -22,6 +22,7 @@ using System.Text;
 using Windows.Data.Json;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
+using Windows.UI.Popups;
 using StockExchangeQuotes.Annotations;
 using WinRTXamlToolkit;
 using WinRTXamlToolkit.Controls;
@@ -39,8 +40,14 @@ namespace StockExchangeQuotes
         {
             this.InitializeComponent();
             pageModel = new QuotationDetailsViewModel();
+            pageModel.NavigatePortfolio += NavigatePortfolio;
             DataContext = pageModel;
             
+        }
+
+        private void NavigatePortfolio()
+        {
+            Frame.Navigate(typeof (MainPage));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs arg)
@@ -73,10 +80,56 @@ namespace StockExchangeQuotes
         }
 
 
+        private void Refresh(object sender, RoutedEventArgs e)
+        {
+            pageModel.RefreshShare();
+        }
+
+        private async void Delete(object sender, RoutedEventArgs e)
+        {
+            // Create the message dialog and set its content
+            var messageDialog = new MessageDialog("Are you sure you want to delete this share from portfolio?");
+
+            // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
+            messageDialog.Commands.Add(new UICommand(
+                "Cancel",
+                new UICommandInvokedHandler(this.CommandInvokedHandler),
+                0));
+            messageDialog.Commands.Add(new UICommand(
+                "Yes",
+                new UICommandInvokedHandler(this.CommandInvokedHandler),
+                1));
+
+            // Set the command that will be invoked by default
+            messageDialog.DefaultCommandIndex = 0;
+
+            // Set the command to be invoked when escape is pressed
+            messageDialog.CancelCommandIndex = 0;
+
+            // Show the message dialog
+            await messageDialog.ShowAsync();
+        }
+
+        private void CommandInvokedHandler(IUICommand command)
+        {
+            // Display message showing the label of the command that was invoked
+            //get clicked button
+            int id = (int)command.Id;
+            if (id == 1)
+            {
+                //delete share from portfolio and redirect to portfolio
+                pageModel.DeleteShare();
+            }
+
+        }
+        
     }
 
     public class QuotationDetailsViewModel : INotifyPropertyChanged, OnApiRequestCompleted
     {
+        public delegate void NavigatePortfolioAction();
+        public event NavigatePortfolioAction NavigatePortfolio;
+
         private ObservableCollection<Tuple<DateTime, double>> _valuesEvolution = new ObservableCollection<Tuple<DateTime, double>>();
         private ObservableCollection<Tuple<DateTime, double>> _values2Evolution = new ObservableCollection<Tuple<DateTime, double>>();
 
@@ -87,14 +140,19 @@ namespace StockExchangeQuotes
             set
             {
                 _symbol = value;
-                APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.Share, "share/" + _symbol);
-                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                var token = localSettings.Values["token"];
-                request.Execute((string)token, null);
-
-                UpdateGraph(null, null, null);
+                RefreshShare();
                 OnPropertyChanged();
             }
+        }
+
+        public void RefreshShare()
+        {
+            APIRequest request = new APIRequest(APIRequest.GET, this, APIRequest.requestCodeType.Share, "share/" + _symbol);
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+            request.Execute((string) token, null);
+
+            UpdateGraph(null, null, null);
         }
 
         private void UpdateGraph(string start, string end, string periodicity)
@@ -299,6 +357,15 @@ namespace StockExchangeQuotes
                     {
                         LimitDown = null;
                     }
+                }else if (requestCode == APIRequest.requestCodeType.PortfolioRemove)
+                {
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
+                    if (!json.ContainsKey("error"))
+                    {
+                        if (NavigatePortfolio != null)
+                            NavigatePortfolio();
+                    }
                 }
             }
             else
@@ -368,6 +435,29 @@ namespace StockExchangeQuotes
             {
                 {"symbol", Symbol},
                 {"limit", null}
+            };
+            var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
+            {
+                UseSimpleDictionaryFormat = true
+            });
+            MemoryStream stream = new MemoryStream();
+            serializer.WriteObject(stream, dict);
+            byte[] bytes = stream.ToArray();
+            string content = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+
+            request.Execute((string)token, content);
+        }
+
+        public void DeleteShare()
+        {
+            APIRequest request = request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.PortfolioRemove, "portfolio/remove");
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+            
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"symbol", Symbol}
             };
             var serializer = new DataContractJsonSerializer(dict.GetType(), new DataContractJsonSerializerSettings()
             {

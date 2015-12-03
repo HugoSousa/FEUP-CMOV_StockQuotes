@@ -103,17 +103,34 @@ router.route('/portfolio/add')
 	.post([auth], function(req, res) {
 		var userid = req.user.iduser;
 		if (req.body.symbol != undefined && req.body.symbol != "") {
-		database.addToPortfolio(userid, req.body.symbol, function(err, result){
-					if (err) {
-			           res.status(400).json({error: err});              
-			        } else {            
-			            res.status(200).json(result);   
-			        }
-				});
+			database.addToPortfolio(userid, req.body.symbol, function(err, result){
+				if (err) {
+		           res.status(400).json({error: err});              
+		        } else {            
+		            res.status(200).json(result);   
+		        }
+			});
 		}  else {            
-	            res.status(200).json({error: "Missing share name"});   
+            res.status(200).json({error: "Missing share name"});   
+        }
+});
+
+router.route('/portfolio/remove')
+.post([auth], function(req, res) {
+	var userid = req.user.iduser;
+	console.log("SYMBOL: " + req.body.symbol);
+	console.log(req.body.symbol != undefined && req.body.symbol != "");
+	if (req.body.symbol != undefined && req.body.symbol != "") {
+		database.removeFromPortfolio(userid, req.body.symbol, function(err, result){
+			if (err) {
+	           res.status(400).json({error: err});              
+	        } else {            
+	            res.status(200).json(result);   
 	        }
-		
+		});
+	}  else {            
+        res.status(200).json({error: "Missing share name"});   
+    }
 });
 
 

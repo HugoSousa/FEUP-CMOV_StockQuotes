@@ -189,6 +189,39 @@ exports.addToPortfolio = function(userid,sharesymbol,cb) {
   });
 }
 
+exports.removeFromPortfolio = function(userid, sharesymbol, cb) {
+    connection.query('select * from share where symbol = ?', [sharesymbol], function (err, rows, fields) {
+    if (!err){
+        if (rows[0] != undefined) {
+             var share = rows[0];
+             console.log("ID: " + share.idshare);
+             connection.query('delete from user_share where iduser = ? and idshare = ?', [userid, share.idshare], function (err, result) {
+                if (!err){
+                  connection.query('update user set main_share = NULL where iduser = ? and main_share = ?', [userid, share.idshare], function (err, result) {
+                    if (!err){ 
+                      cb(null,  "Successfully removed share");
+                    }
+                    else{
+                      console.log('Error on share removal: ', err);
+                      cb(err,null);
+                    }
+                  });
+                }
+                else{
+                  console.log('Error on share removal: ', err);
+                  cb(err,null);
+                }
+              });
+        }
+        else cb("Share not found", null);
+    }
+    else{
+      console.log('Error while performing search.');
+      cb(err, null);
+    }
+  });
+}
+
 
 exports.setFavoriteShare = function(userid,sharesymbol,cb) {
     connection.query('select * from share where symbol = ?', [sharesymbol], function (err, rows, fields) {
