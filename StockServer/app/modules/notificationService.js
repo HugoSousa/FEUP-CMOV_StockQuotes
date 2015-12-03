@@ -209,46 +209,75 @@ module.exports = function (database) {
 				unsentNotifications ++;
 				callback();
 			} else {
-
 				var channelUri = notification.uri;
 				var options = {
 				    client_id: 'ms-app://s-1-15-2-1138758474-2145312275-3121119297-970850903-389564513-1170456302-860354335',
 				    client_secret: 'ivJo7vftYrwIoD4M4DgfYyegrztbtLja'   
 				};
+
+				if (notification.type == "star") {
+					wns.sendTile(
+				    channelUri,
+				    {
+				        type: 'TileSquareText04',
+				        text1: 'Hello'
+				    },
+				    {
+				        type: 'TileWideText09',
+				        text1: 'Hello',
+				        text2: 'How are you?'
+				    },
+				    options
+				    , 
+				    function (error, result) {
+				         if (error){
+					    	//console.error(error);
+					    	failedNotifications++;
+					    }
+					    else {
+					    	sentNotifications++;
+					    	//console.log(result);
+					    }
+					    callback();
+				    });
+				}	
+				else {
+					callback();
+				}
+				/*
 				wns.sendTileSquareBlock(channelUri, 'No!', 'It worked!', options, function (error, result) {
-				    if (error){
-				    	//console.error(error);
-				    	failedNotifications++;
-				    }
-				    else {
-				    	sentNotifications++;
-				    	//console.log(result);
-				    }
-				    /*
-				    wns.sendToastText01(channelUri, 'Toast!', options, function (error, result) {
-				    if (error){
-				    	//console.error(error);
-				    	failedNotifications++;
-				    }
-				    else {
-				    	sentNotifications++;
-				    	//console.log(result);
-				    }
-				    */
-				    /*
-				    wns.sendTileWideBlockAndText01(channelUri, 'Large!', 'It worked!', "a", "b", "c", "d", options, function (error, result) {
-				    if (error){
-				    	//console.error(error);
-				    	failedNotifications++;
-				    }
-				    else {
-				    	sentNotifications++;
-				    	//console.log(result);
-				    }*/
-				    callback();
+					    if (error){
+					    	//console.error(error);
+					    	failedNotifications++;
+					    }
+					    else {
+					    	sentNotifications++;
+					    	//console.log(result);
+					    }
+					
+					    wns.sendToastText01(channelUri, 'Toast!', options, function (error, result) {
+					    if (error){
+					    	//console.error(error);
+					    	failedNotifications++;
+					    }
+					    else {
+					    	sentNotifications++;
+					    	//console.log(result);
+					    }
+					  
+					    wns.sendTileWideBlockAndText01(channelUri, 'Large!', 'It worked!', "a", "b", "c", "d", options, function (error, result) {
+					    if (error){
+					    	//console.error(error);
+					    	failedNotifications++;
+					    }
+					    else {
+					    	sentNotifications++;
+					    	//console.log(result);
+					    }
+					    callback();
 
-				});
-
+					});
+					*/
 				//});
 
 

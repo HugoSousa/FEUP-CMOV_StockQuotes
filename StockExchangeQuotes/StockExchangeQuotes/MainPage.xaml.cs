@@ -231,6 +231,7 @@ namespace StockExchangeQuotes
             PushNotificationChannel channel;
             try
             {
+                //TODO subscribe to NetworkStatusChanged if channel is null
                 channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
                 string channelUri = channel.Uri;
                 APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.UpdateUri, "user/updatechannelUri");
