@@ -45,8 +45,10 @@ namespace StockExchangeQuotes
             DataContext = pageModel;
             
             FromCalendar.Date = DateTime.Now.AddDays(-30);
+            FromCalendar.MaxDate = DateTime.Now;
             ToCalendar.Date = DateTime.Now;
-           
+            ToCalendar.MaxDate = DateTime.Now;
+
         }
 
         private void NavigatePortfolio()
