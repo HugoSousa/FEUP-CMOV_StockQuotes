@@ -17,7 +17,13 @@ namespace StockExchangeQuotes
         public bool IsMain { get; set; }
 
         //value to be used to pass parameters to SetLimitDialog
-        public string LimitType { get; set; } 
+        public string LimitType { get; set; }
+
+        //value to be used to pass parameters to SetLimitDialog
+        public string Date { get; set; }
+
+        //value to be used to pass parameters to SetLimitDialog
+        public string Time { get; set; }
 
         public override string ToString()
         {

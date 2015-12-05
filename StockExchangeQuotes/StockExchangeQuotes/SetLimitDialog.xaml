@@ -15,7 +15,17 @@
     <StackPanel>
         <TextBlock Text="{Binding Symbol}" Style="{ThemeResource HeaderTextBlockStyle}" Margin="15 10 0 5"/>
         <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Margin="15 0 0 5"></TextBlock>
-        <TextBlock Text="{Binding Value}" Margin="15 0 0 20 "></TextBlock>
+        <Grid Margin="15 0 15 15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Value}" Grid.Column="0"></TextBlock>
+            <TextBlock Text="{Binding Date}" Margin="0 0 5 0"  Grid.Column="2"></TextBlock>
+            <TextBlock Text="{Binding Time}" Margin="0 0 0 15" Grid.Column="3"></TextBlock>
+        </Grid>
 
         <TextBlock Text="{Binding LimitType}" Style="{ThemeResource SubheaderTextBlockStyle}" HorizontalAlignment="Center" Margin="0 0 0 20" ></TextBlock>
         

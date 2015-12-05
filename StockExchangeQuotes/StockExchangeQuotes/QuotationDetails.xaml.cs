@@ -46,6 +46,7 @@ namespace StockExchangeQuotes
             
             FromCalendar.Date = DateTime.Now.AddDays(-30);
             ToCalendar.Date = DateTime.Now;
+           
         }
 
         private void NavigatePortfolio()
@@ -69,9 +70,9 @@ namespace StockExchangeQuotes
             Quotation q = null;
 
             if ((string)((Button)sender).Tag == "SetLimitUp")
-                q = new Quotation() {Symbol = pageModel.Symbol, Name = pageModel.Name, Value = pageModel.Value, LimitType = "Upper Limit"};
+                q = new Quotation() {Symbol = pageModel.Symbol, Name = pageModel.Name, Value = pageModel.Value, LimitType = "Upper Limit", Date = pageModel.Date, Time = pageModel.Time };
             else if((string)((Button)sender).Tag == "SetLimitDown")
-                q = new Quotation() { Symbol = pageModel.Symbol, Name = pageModel.Name, Value = pageModel.Value, LimitType = "Lower Limit" };
+                q = new Quotation() { Symbol = pageModel.Symbol, Name = pageModel.Name, Value = pageModel.Value, LimitType = "Lower Limit", Date = pageModel.Date, Time = pageModel.Time };
 
             Frame.Navigate(typeof (SetLimitDialog), q);
         }
@@ -265,6 +266,19 @@ namespace StockExchangeQuotes
             }
         }
 
+        private string _date;
+
+        public string Date
+        {
+            get { return _date; }
+            set
+            {
+                if (_date == value) return;
+                _date = value;
+                OnPropertyChanged();
+            }
+        }
+
         private DateTimeOffset? _fromDate;
 
         public DateTimeOffset? FromDate
@@ -335,6 +349,7 @@ namespace StockExchangeQuotes
                     Name = json.GetNamedString("name");
                     Value = json.GetNamedNumber("value");
                     Time = json.GetNamedString("time");
+                    Date = json.GetNamedString("date");
                     if (json.GetNamedValue("limit_down").ValueType != JsonValueType.Null)
                         LimitDown = json.GetNamedNumber("limit_down");
                     else
@@ -465,7 +480,7 @@ namespace StockExchangeQuotes
 
         }
 
-        public void UpdateChart()
+        public async void UpdateChart()
         {
 
             string path = "share/evolution/" + Symbol;
@@ -485,16 +500,13 @@ namespace StockExchangeQuotes
                     }
                     else
                     {
-                        var toastXmlContent = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-
-                        var txtNodes = toastXmlContent.GetElementsByTagName("text");
-                        txtNodes[0].AppendChild(toastXmlContent.CreateTextNode("Invalid dates."));
-                        txtNodes[1].AppendChild(toastXmlContent.CreateTextNode(""));
-
-                        var toast = new ToastNotification(toastXmlContent);
-                        var toastNotifier = ToastNotificationManager.CreateToastNotifier();
-                        toastNotifier.Show(toast);
-                        return;
+                        var messageDialog = new MessageDialog("Invalid dates.");
+                        
+                        messageDialog.Commands.Add(new UICommand(
+                            "Ok"));
+                        
+                        // Show the message dialog
+                        await messageDialog.ShowAsync();
                     }
                 }
             }

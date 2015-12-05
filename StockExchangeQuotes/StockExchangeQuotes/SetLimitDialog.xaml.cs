@@ -35,7 +35,7 @@ namespace StockExchangeQuotes
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var quotation = e.Parameter as Quotation;
-            pageModel = new SetLimitDialogViewModel() {Symbol = quotation.Symbol, Name = quotation.Name, Value = quotation.Value, LimitType = quotation.LimitType};
+            pageModel = new SetLimitDialogViewModel() {Symbol = quotation.Symbol, Name = quotation.Name, Value = quotation.Value, LimitType = quotation.LimitType, Date = quotation.Date, Time = quotation.Time};
             pageModel.NavigateBack += NavigateQuotationDetails;
             DataContext = pageModel;
             
@@ -126,6 +126,31 @@ namespace StockExchangeQuotes
             {
                 if (_limitValue == value) return;
                 _limitValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _time;
+        public string Time
+        {
+            get { return _time; }
+            set
+            {
+                if (_time == value) return;
+                _time = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _date;
+
+        public string Date
+        {
+            get { return _date; }
+            set
+            {
+                if (_date == value) return;
+                _date = value;
                 OnPropertyChanged();
             }
         }
