@@ -212,7 +212,8 @@ module.exports = function (database) {
 				var channelUri = notification.uri;
 				var options = {
 				    client_id: 'ms-app://s-1-15-2-1138758474-2145312275-3121119297-970850903-389564513-1170456302-860354335',
-				    client_secret: 'ivJo7vftYrwIoD4M4DgfYyegrztbtLja'   
+				    client_secret: 'ivJo7vftYrwIoD4M4DgfYyegrztbtLja',
+				    launch: notification.symbol  
 				};
 
 				if (notification.type == "star") {

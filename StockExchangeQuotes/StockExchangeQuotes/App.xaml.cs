@@ -41,6 +41,7 @@ namespace StockExchangeQuotes
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            string launchString = e.Arguments;
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -73,11 +74,10 @@ namespace StockExchangeQuotes
                 // visibility of the Back button
                 SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    rootFrame.CanGoBack ?
-                    AppViewBackButtonVisibility.Visible :
-                    AppViewBackButtonVisibility.Collapsed;
             }
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            Object token = localSettings.Values["token"];
 
             if (rootFrame.Content == null)
             {
@@ -85,9 +85,7 @@ namespace StockExchangeQuotes
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 //
-                
-                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                Object token = localSettings.Values["token"];
+               
 
                 if (token == null)
                 {
@@ -95,13 +93,42 @@ namespace StockExchangeQuotes
                 }
                 else
                 {
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    if (String.IsNullOrEmpty(launchString))
+                    {
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                     }
+
+                    else
+                    {
+                        rootFrame.Navigate(typeof(QuotationDetails), launchString);
+                        rootFrame.BackStack.Add(new PageStackEntry(typeof(MainPage), null, null));
+                       // SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+                    }
+
                 }
 
+            } else
+            {
+                if (token != null && !String.IsNullOrEmpty(launchString))
+                {
+                    rootFrame.Navigate(typeof(QuotationDetails), launchString);
+                   // rootFrame.BackStack.Add(new PageStackEntry(typeof(MainPage), null, null));
+                    // SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+                }
             }
+
+
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                rootFrame.CanGoBack ?
+                AppViewBackButtonVisibility.Visible :
+                AppViewBackButtonVisibility.Collapsed;
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails

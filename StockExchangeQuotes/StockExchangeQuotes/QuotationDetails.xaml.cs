@@ -49,7 +49,17 @@ namespace StockExchangeQuotes
             ToCalendar.Date = DateTime.Now;
             ToCalendar.MaxDate = DateTime.Now;
 
+            /*
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += (s, e) =>
+            {
+                Frame.Navigate(typeof(MainPage));
+            };
+            */
         }
+
+
 
         private void NavigatePortfolio()
         {
