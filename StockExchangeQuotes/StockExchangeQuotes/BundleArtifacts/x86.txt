@@ -1,0 +1,1 @@
+MainPackage=C:\Users\Utilizador\Documents\FEUP-CMOV_StockQuotes\StockExchangeQuotes\StockExchangeQuotes\bin\x86\Debug\StockExchangeQuotes_1.1.1.0_x86_Debug.appx

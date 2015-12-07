@@ -219,13 +219,17 @@ module.exports = function (database) {
 					wns.sendTile(
 				    channelUri,
 				    {
-				        type: 'TileSquareText04',
-				        text1: 'Hello'
+				        type: 'TileWideText09',
+				        text1: notification.symbol  ,
+				        text2:  '$' + notification.value + '\n' + notification.name
+
 				    },
 				    {
-				        type: 'TileWideText09',
-				        text1: 'Hello',
-				        text2: 'How are you?'
+				        type: 'TileWideBlockAndText02',
+				        text1: notification.symbol + '\n' +notification.name,
+				        text2: '',
+				        text3: '$' + notification.value
+
 				    },
 				    options
 				    , 
