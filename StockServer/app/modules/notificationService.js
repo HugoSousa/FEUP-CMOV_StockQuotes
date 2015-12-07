@@ -221,13 +221,13 @@ module.exports = function (database) {
 				    {
 				        type: 'TileSquareText02',
 				        text1: notification.symbol  ,
-				        text2:  '$' + notification.value
+				        text2: notification.value
 
 				    },
 				    {
 				        type: 'TileWideText09',
 				        text1: notification.symbol,
-				        text2: '$' + notification.value + '\n' +notification.name,
+				        text2: notification.value + '\n' +notification.name,
 
 				    },
 				    options
@@ -247,9 +247,9 @@ module.exports = function (database) {
 				else {
 					var text = "";
 					if (notification.type == "lower")
-						text = "Quotation: $" + notification.value + '\nLower than your limit: $' + notification.limit;
+						text = "Quotation: " + notification.value + '\nLower than your limit: ' + notification.limit;
 					else
-						text = "Quotation: $" + notification.value + '\nHigher than your limit: $' + notification.limit;
+						text = "Quotation: " + notification.value + '\nHigher than your limit: ' + notification.limit;
 					
 					wns.sendToastText02(channelUri, notification.symbol, text, options, function(error, result) {
 						if (error){
