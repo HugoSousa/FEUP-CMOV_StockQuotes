@@ -245,31 +245,14 @@ module.exports = function (database) {
 				    });
 				}	
 				else {
-					callback();
-				}
-				/*
-				wns.sendTileSquareBlock(channelUri, 'No!', 'It worked!', options, function (error, result) {
-					    if (error){
-					    	//console.error(error);
-					    	failedNotifications++;
-					    }
-					    else {
-					    	sentNotifications++;
-					    	//console.log(result);
-					    }
+					var text = "";
+					if (notification.type == "lower")
+						text = "Quotation: $" + notification.value + '\nLower than your limit: $' + notification.limit;
+					else
+						text = "Quotation: $" + notification.value + '\nHigher than your limit: $' + notification.limit;
 					
-					    wns.sendToastText01(channelUri, 'Toast!', options, function (error, result) {
-					    if (error){
-					    	//console.error(error);
-					    	failedNotifications++;
-					    }
-					    else {
-					    	sentNotifications++;
-					    	//console.log(result);
-					    }
-					  
-					    wns.sendTileWideBlockAndText01(channelUri, 'Large!', 'It worked!', "a", "b", "c", "d", options, function (error, result) {
-					    if (error){
+					wns.sendToastText02(channelUri, notification.symbol, text, options, function(error, result) {
+						if (error){
 					    	//console.error(error);
 					    	failedNotifications++;
 					    }
@@ -278,11 +261,10 @@ module.exports = function (database) {
 					    	//console.log(result);
 					    }
 					    callback();
+					}); 
 
-					});
-					*/
-				//});
 
+				}
 
 			}
 		}, function(err) {
