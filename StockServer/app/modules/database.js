@@ -357,11 +357,16 @@ exports.getShare = function(userid, sharesymbol, cb) {
           var time = line_fields[3].replace(/\"/g, "");
 
           value = parseFloat(line_fields[1]);
-          rows[0]['value'] = value; 
-          rows[0]['date'] = date;
-          rows[0]['time'] = time;
+          if (typeof rows[0] === 'undefined' || rows[0] === null)
+            cb("This share does not exist in the portfolio",null);
+          else {
+            rows[0]['value'] = value; 
+            rows[0]['date'] = date;
+            rows[0]['time'] = time;
 
-          cb(null, rows[0]);
+            cb(null, rows[0]); 
+          }
+
         });
       }
 

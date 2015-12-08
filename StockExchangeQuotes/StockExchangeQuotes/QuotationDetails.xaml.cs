@@ -361,20 +361,31 @@ namespace StockExchangeQuotes
             {
                 if (requestCode == APIRequest.requestCodeType.Share)
                 {
-                    JsonObject json = JsonObject.Parse(result);
-                    Name = json.GetNamedString("name");
-                    Value = json.GetNamedNumber("value");
-                    Time = json.GetNamedString("time");
-                    Date = json.GetNamedString("date");
-                    if (json.GetNamedValue("limit_down").ValueType != JsonValueType.Null)
-                        LimitDown = json.GetNamedNumber("limit_down");
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
+                    if (!json.ContainsKey("error"))
+                    {
+                        Name = json.GetNamedString("name");
+                        Value = json.GetNamedNumber("value");
+                        Time = json.GetNamedString("time");
+                        Date = json.GetNamedString("date");
+                        if (json.GetNamedValue("limit_down").ValueType != JsonValueType.Null)
+                            LimitDown = json.GetNamedNumber("limit_down");
+                        else
+                            LimitDown = null;
+                        if (json.GetNamedValue("limit_up").ValueType != JsonValueType.Null)
+                            LimitUp = json.GetNamedNumber("limit_up");
+                        else
+                            LimitUp = null;
+                        Favorite = Convert.ToBoolean(json.GetNamedNumber("is_main"));
+                    }
                     else
-                        LimitDown = null;
-                    if (json.GetNamedValue("limit_up").ValueType != JsonValueType.Null)
-                        LimitUp = json.GetNamedNumber("limit_up");
-                    else
-                        LimitUp = null;
-                    Favorite = Convert.ToBoolean(json.GetNamedNumber("is_main"));
+                    {
+                        if (NavigatePortfolio != null)
+                            NavigatePortfolio();
+                    }
+
+                  
 
                 }
                 else if (requestCode == APIRequest.requestCodeType.ShareEvolution)
