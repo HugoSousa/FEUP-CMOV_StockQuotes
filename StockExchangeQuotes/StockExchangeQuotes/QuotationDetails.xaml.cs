@@ -63,7 +63,11 @@ namespace StockExchangeQuotes
 
         private void NavigatePortfolio()
         {
-            Frame.Navigate(typeof (MainPage));
+            
+            if (Frame.CanGoBack)
+                Frame.GoBack();
+            else
+                Frame.Navigate(typeof(MainPage));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs arg)
