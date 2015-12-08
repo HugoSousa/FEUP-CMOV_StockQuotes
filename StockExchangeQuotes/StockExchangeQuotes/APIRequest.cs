@@ -32,7 +32,8 @@ namespace StockExchangeQuotes
             SetLimit,
             ClearLimitUp,
             ClearLimitDown,
-            UpdateUri
+            UpdateUri,
+            Logout
         }
 
         private requestCodeType requestCode;

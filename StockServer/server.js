@@ -181,6 +181,20 @@ router.route('/user/updatechannelUri')
 	
 });
 
+router.route('/logout')
+.post([auth], function(req, res) {
+	var userid = req.user.iduser;
+	database.updateChannelUri(userid, null, function(err, result){
+		if (err) {
+           res.status(400).json({error: err});              
+        } else {            
+            res.status(200).json(result);   
+        }
+	});
+
+	
+});
+
 router.route('/portfolio/setlimitup')
 	.post([auth], function(req, res) {
 		var userid = req.user.iduser;

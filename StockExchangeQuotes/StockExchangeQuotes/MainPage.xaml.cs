@@ -24,6 +24,7 @@ using Windows.UI.Notifications;
 using Windows.Web.Http;
 using StockExchangeQuotes.Annotations;
 using Windows.Networking.PushNotifications;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -44,7 +45,7 @@ namespace StockExchangeQuotes
         {
             this.InitializeComponent();
 
-            pageModel = new MainPageViewModel();
+            pageModel = new MainPageViewModel(this);
             DataContext = pageModel;
 
             pageModel.updateChannelUri();
@@ -94,12 +95,33 @@ namespace StockExchangeQuotes
 
         private void LogoutClick(object sender, RoutedEventArgs e)
         {
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            pageModel.Logout();
 
-            localSettings.Values["token"] = null;
-            localSettings.Values["main_share"] = null;
-            localSettings.Values["username"] = null;
-            Frame.Navigate(typeof (Login));
+        }
+
+
+        public async void LogoutHandler(bool result)
+        {
+
+            if (result)
+            {
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+                localSettings.Values["token"] = null;
+                localSettings.Values["main_share"] = null;
+                localSettings.Values["username"] = null;
+                Frame.Navigate(typeof(Login));
+            } else
+            {
+                var messageDialog = new MessageDialog("Cannot logout.");
+
+                messageDialog.Commands.Add(new UICommand(
+                    "Ok"));
+
+                // Show the message dialog
+                await messageDialog.ShowAsync();
+            }
+      
         }
 
         private void RefreshPortfolio(object sender, RoutedEventArgs e)
@@ -110,6 +132,7 @@ namespace StockExchangeQuotes
 
     public class MainPageViewModel : INotifyPropertyChanged, OnApiRequestCompleted
     {
+        MainPage view;
         SharesSingleton ss = SharesSingleton.Instance;
 
         private ObservableCollection<Quotation> _items;
@@ -139,10 +162,11 @@ namespace StockExchangeQuotes
         }
         */
 
-        public MainPageViewModel()
+        public MainPageViewModel(MainPage v)
         {
             Items = new ObservableCollection<Quotation>();
             RefreshPortfolio();
+            this.view = v;
 
 
         }
@@ -226,6 +250,16 @@ namespace StockExchangeQuotes
 
         }
 
+        public void Logout()
+        {
+            APIRequest request = new APIRequest(APIRequest.POST, this, APIRequest.requestCodeType.Logout, "logout");
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var token = localSettings.Values["token"];
+
+            request.Execute((string)token, null);
+        }
+
         async public void updateChannelUri()
         {
             PushNotificationChannel channel;
@@ -304,6 +338,13 @@ namespace StockExchangeQuotes
                 else if (requestCode == APIRequest.requestCodeType.UpdateUri)
                 {
                     // update sucessfull
+                }
+                else if (requestCode == APIRequest.requestCodeType.Logout)
+                {
+                    JsonObject json = new JsonObject();
+                    JsonObject.TryParse(result, out json);
+                    view.LogoutHandler(!json.ContainsKey("error"));
+                 
                 }
             }
             else
